@@ -75,8 +75,9 @@ dependencies {
 
     // Room dependencies
     implementation(libs.androidx.room.runtime) // Room runtime library
-    implementation(libs.androidx.room.ktx) // Room KTX library for coroutines
-    //ksp(libs.androidx.room.compiler) // KSP for Room
+    implementation(libs.androidx.room.ktx)
+    implementation(libs.androidx.room.common) // Room KTX library for coroutines
+//    ksp(libs.androidx.room.compiler) // KSP for Room
 
     // Testing dependencies
     testImplementation(libs.junit) // JUnit for unit testing
