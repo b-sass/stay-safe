@@ -1,3 +1,5 @@
+import java.io.FileInputStream
+import java.util.Properties
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
@@ -14,8 +16,10 @@ android {
         targetSdk = 35
         versionCode = 1
         versionName = "1.0"
-
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+
+        buildConfigField("String", "MAP_API_GOOGLE", "\"${getApiGet()}\"")
+        manifestPlaceholders["API_KEY"] = getApiGet()
     }
 
     buildTypes {
@@ -50,6 +54,13 @@ android {
     buildFeatures {
         compose = true
     }
+}
+
+fun getApiGet(): String
+{
+    val properties = Properties()
+    properties.load(FileInputStream("local.properties"))
+    return properties.getProperty("MAP_API_GOOGLE")
 }
 
 dependencies {
