@@ -1,8 +1,8 @@
 package com.example.madproject
 
-import androidx.room.Query
+import androidx.room.*
 
-@DAO
+@Dao
 interface DAO {
     @Query("SELECT * FROM usersTable")
     suspend fun getAll(): List<User>

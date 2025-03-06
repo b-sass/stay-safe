@@ -1,9 +1,13 @@
 import java.io.FileInputStream
 import java.util.Properties
+
+
+
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.ksp)
+    alias(libs.plugins.compose.compiler)
 }
 
 android {
@@ -18,17 +22,24 @@ android {
         versionName = "1.0"
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
 
-        buildConfigField("String", "MAP_API_GOOGLE", "\"${getApiGet()}\"")
-        manifestPlaceholders["API_KEY"] = getApiGet()
+        val properties = Properties()
+        properties.load(project.rootProject.file("local.properties").inputStream())
+        buildConfigField("String", "MAP_API_GOOGLE", "\"${properties.getProperty(" MAP_API_GOOGLE ")}\"")
+
+        vectorDrawables {
+            useSupportLibrary = true
+        }
     }
 
     buildTypes {
+        android.buildFeatures.buildConfig = true
         release {
-            isMinifyEnabled = false
+            isMinifyEnabled = true
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
+
         }
     }
 
@@ -53,15 +64,15 @@ android {
 
     buildFeatures {
         compose = true
+        buildConfig = true
+    }
+
+    composeOptions {
+        kotlinCompilerExtensionVersion = "1.5.6"
     }
 }
 
-fun getApiGet(): String
-{
-    val properties = Properties()
-    properties.load(FileInputStream("local.properties"))
-    return properties.getProperty("MAP_API_GOOGLE")
-}
+
 
 dependencies {
     implementation(libs.androidx.core.ktx) // Core KTX library
@@ -75,9 +86,9 @@ dependencies {
 
     // Room dependencies
     implementation(libs.androidx.room.runtime) // Room runtime library
+    ksp(libs.androidx.room.ksp) // KSP for Room
     implementation(libs.androidx.room.ktx) // Room KTX library for coroutines
-    //ksp(libs.androidx.room.compiler) // KSP for Room
-
+    
     // Testing dependencies
     testImplementation(libs.junit) // JUnit for unit testing
     androidTestImplementation(libs.androidx.junit) // AndroidX JUnit for UI testing
@@ -86,4 +97,14 @@ dependencies {
     androidTestImplementation(libs.androidx.ui.test.junit4) // Compose UI testing with JUnit4
     debugImplementation(libs.androidx.ui.tooling) // Debug tooling for Compose
     debugImplementation(libs.androidx.ui.test.manifest) // Manifest for UI testing
+
+    // Google api
+    implementation(libs.androidx.activity.compose)
+    implementation(libs.play.services.maps)
+    implementation(libs.maps.compose)
+    implementation(libs.maps.ktx)
+    implementation(libs.maps.utils.ktx)
+
+    implementation(libs.accompanist.permissions)
+
 }
