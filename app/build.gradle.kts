@@ -24,7 +24,8 @@ android {
 
         val properties = Properties()
         properties.load(project.rootProject.file("local.properties").inputStream())
-        buildConfigField("String", "MAP_API_GOOGLE", "\"${properties.getProperty(" MAP_API_GOOGLE ")}\"")
+        buildConfigField("String", "MAP_API_GOOGLE", "\"${properties.getProperty("MAP_API_GOOGLE")}\"")
+        manifestPlaceholders["MAP_API_GOOGLE"] = properties.getProperty("MAP_API_GOOGLE")
 
         vectorDrawables {
             useSupportLibrary = true
@@ -88,7 +89,7 @@ dependencies {
     implementation(libs.androidx.room.runtime) // Room runtime library
     ksp(libs.androidx.room.ksp) // KSP for Room
     implementation(libs.androidx.room.ktx) // Room KTX library for coroutines
-    
+
     // Testing dependencies
     testImplementation(libs.junit) // JUnit for unit testing
     androidTestImplementation(libs.androidx.junit) // AndroidX JUnit for UI testing
