@@ -45,7 +45,7 @@ android {
     }
 
     composeOptions {
-        kotlinCompilerExtensionVersion = "1.5.1" // Ensure this matches your Compose version
+        kotlinCompilerExtensionVersion = "1.5.1"
     }
 
     packaging {
@@ -68,9 +68,6 @@ android {
         buildConfig = true
     }
 
-    composeOptions {
-        kotlinCompilerExtensionVersion = "1.5.6"
-    }
 }
 
 
@@ -100,7 +97,6 @@ dependencies {
     debugImplementation(libs.androidx.ui.test.manifest) // Manifest for UI testing
 
     // Google api
-    implementation(libs.androidx.activity.compose)
     implementation(libs.play.services.maps)
     implementation(libs.maps.compose)
     implementation(libs.maps.ktx)
