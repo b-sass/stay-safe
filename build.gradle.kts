@@ -4,3 +4,9 @@ plugins {
     alias(libs.plugins.kotlin.android) apply false
     id("com.google.devtools.ksp") version "2.0.0-1.0.24" apply false
 }
+
+buildscript {
+    dependencies {
+        classpath(libs.secrets.gradle.plugin)
+    }
+}
