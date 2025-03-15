@@ -1,13 +1,11 @@
 import java.io.FileInputStream
 import java.util.Properties
 
-
-
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
-    alias(libs.plugins.kotlin.ksp)
     alias(libs.plugins.compose.compiler)
+    id("com.google.devtools.ksp")
 }
 
 android {
@@ -21,12 +19,6 @@ android {
         versionCode = 1
         versionName = "1.0"
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
-
-        val properties = Properties()
-        properties.load(project.rootProject.file("local.properties").inputStream())
-        buildConfigField("String", "MAP_API_GOOGLE", "\"${properties.getProperty("MAP_API_GOOGLE")}\"")
-        manifestPlaceholders["MAP_API_GOOGLE"] = properties.getProperty("MAP_API_GOOGLE")
-
         vectorDrawables {
             useSupportLibrary = true
         }
@@ -82,11 +74,6 @@ dependencies {
     implementation(libs.androidx.ui.tooling.preview) // Compose UI tooling preview
     implementation(libs.androidx.material3) // Material 3 library for Compose
 
-    // Room dependencies
-    implementation(libs.androidx.room.runtime) // Room runtime library
-    ksp(libs.androidx.room.ksp) // KSP for Room
-    implementation(libs.androidx.room.ktx) // Room KTX library for coroutines
-
     // Testing dependencies
     testImplementation(libs.junit) // JUnit for unit testing
     androidTestImplementation(libs.androidx.junit) // AndroidX JUnit for UI testing
@@ -96,12 +83,8 @@ dependencies {
     debugImplementation(libs.androidx.ui.tooling) // Debug tooling for Compose
     debugImplementation(libs.androidx.ui.test.manifest) // Manifest for UI testing
 
-    // Google api
-    implementation(libs.play.services.maps)
-    implementation(libs.maps.compose)
-    implementation(libs.maps.ktx)
-    implementation(libs.maps.utils.ktx)
-
-    implementation(libs.accompanist.permissions)
-
+    // Room Dependencies
+    implementation(libs.androidx.room.runtime)
+    ksp(libs.androidx.room.compiler)
+    implementation(libs.androidx.room.ktx)
 }
