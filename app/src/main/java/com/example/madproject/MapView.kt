@@ -20,6 +20,8 @@ import com.google.android.gms.maps.model.CameraPosition
 import com.google.maps.android.compose.GoogleMap
 import com.google.maps.android.compose.rememberCameraPositionState
 import com.google.android.gms.maps.model.LatLng
+import com.google.maps.android.compose.ComposeMapColorScheme
+import com.google.maps.android.compose.MapUiSettings
 
 @Composable
 fun MapView() {
@@ -60,7 +62,11 @@ fun MapView() {
         ) {
             GoogleMap(
                 modifier = Modifier.fillMaxSize(),
-                cameraPositionState = cameraPositionState
+                cameraPositionState = cameraPositionState,
+                mapColorScheme = ComposeMapColorScheme.FOLLOW_SYSTEM,
+                uiSettings = MapUiSettings(
+                    zoomControlsEnabled = false,
+                )
             ) {
                 // You can add markers or other map elements here
             }
