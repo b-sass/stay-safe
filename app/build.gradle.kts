@@ -85,6 +85,9 @@ dependencies {
     implementation(libs.androidx.ui.graphics) // Compose UI graphics library
     implementation(libs.androidx.ui.tooling.preview) // Compose UI tooling preview
     implementation(libs.androidx.material3) // Material 3 library for Compose
+    // Icons
+    implementation(libs.androidx.material.icons.core)
+    implementation(libs.androidx.material.icons.extended)
 
     // Testing dependencies
     testImplementation(libs.junit) // JUnit for unit testing
