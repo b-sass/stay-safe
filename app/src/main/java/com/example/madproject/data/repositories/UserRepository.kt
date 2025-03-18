@@ -4,6 +4,10 @@ import com.example.madproject.data.sources.ContactRemoteDataSource
 import com.example.madproject.data.sources.UserRemoteDataSource
 
 class UserRepository (
-    private val userRemoteDataSource: UserRemoteDataSource,
-    private val contactRemoteDataSource: ContactRemoteDataSource,
-)
+    private val userRemoteDataSource: UserRemoteDataSource = UserRemoteDataSource(),
+    private val contactRemoteDataSource: ContactRemoteDataSource = ContactRemoteDataSource(),
+) {
+    suspend fun getUsers(): String {
+        return userRemoteDataSource.getUsers()
+    }
+}

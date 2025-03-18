@@ -105,4 +105,7 @@ dependencies {
 
     // Google Maps
     implementation(libs.maps.compose)
+
+    // Volley
+    implementation(libs.volley)
 }

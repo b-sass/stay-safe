@@ -13,6 +13,7 @@ materialIconsExtended = "1.7.8"
 roomCompiler = "2.6.1"
 roomRuntime = "2.6.1"
 secretsGradlePlugin = "2.0.1"
+volley = "1.2.1"
 
 [libraries]
 androidx-material-icons-core = { module = "androidx.compose.material:material-icons-core", version.ref = "materialIconsExtended" }
@@ -40,6 +41,8 @@ androidx-room-runtime = { module = "androidx.room:room-runtime", version.ref = "
 # Google Maps
 maps-compose = { module = "com.google.maps.android:maps-compose", version.ref = "mapsCompose" }
 secrets-gradle-plugin = { module = "com.google.android.libraries.mapsplatform.secrets-gradle-plugin:secrets-gradle-plugin", version.ref = "secretsGradlePlugin" }
+# Volley
+volley = { module = "com.android.volley:volley", version.ref = "volley" }
 
 [plugins]
 compose-compiler = {id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin"}
