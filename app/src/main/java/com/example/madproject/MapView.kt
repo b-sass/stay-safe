@@ -30,7 +30,9 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.rememberBottomSheetScaffoldState
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -39,17 +41,22 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.asFlow
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.google.android.gms.maps.model.CameraPosition
 import com.google.maps.android.compose.GoogleMap
 import com.google.maps.android.compose.rememberCameraPositionState
 import com.google.android.gms.maps.model.LatLng
 import com.google.maps.android.compose.ComposeMapColorScheme
 import com.google.maps.android.compose.MapUiSettings
-import kotlinx.coroutines.launch
+import androidx.compose.foundation.lazy.items
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun MapView() {
+fun MapView(
+    viewModel: MapViewModel = viewModel(),
+) {
     // Set the initial camera position
     val coroutineScope = rememberCoroutineScope()
     val cameraPositionState = rememberCameraPositionState {
@@ -62,6 +69,9 @@ fun MapView() {
     val sheetState = rememberModalBottomSheetState(
 //        skipPartiallyExpanded = true
     )
+
+    val users by viewModel.usersData.asFlow().collectAsState(initial = emptyList())
+    viewModel.getUsers()
 
     Scaffold(
         bottomBar = {
@@ -112,14 +122,14 @@ fun MapView() {
             ) {
                 Column {
                     LazyColumn {
-                        items(10) {
+                        items(users.toList()) { user ->
                             Row(
                                 verticalAlignment = Alignment.CenterVertically,
                                 modifier = Modifier.padding(horizontal = 4.dp, vertical = 8.dp)
                             ) {
                                 Icon(Icons.Filled.Person, "Contact", modifier = Modifier.size(32.dp))
                                 Spacer(modifier = Modifier.padding(4.dp))
-                                Text("Contact $it", fontSize = 32.sp)
+                                Text("Contact ${user.userName}", fontSize = 32.sp)
                             }
                             HorizontalDivider()
                         }

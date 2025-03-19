@@ -1,5 +1,5 @@
 package com.example.madproject.data.sources
 
-class StatusRemoteDataSource {
+class ActivityService {
 
 }
