@@ -26,11 +26,11 @@ class UserService(
     }
 
     suspend fun createUser(user: User) {
-        client.post("users")
+        client.post("users") // TODO: send user object
     }
 
-    suspend fun updateUser(id: Int) {
-        client.put("users/$id")
+    suspend fun updateUser(id: Int, user: User) {
+        client.put("users/$id") // TODO: send user object
     }
 
     suspend fun deleteUser(id: Int) {

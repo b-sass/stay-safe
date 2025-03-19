@@ -1,20 +1,54 @@
 package com.example.madproject.data.repositories
 
+import com.example.madproject.data.models.Activity
+import com.example.madproject.data.models.Location
 import com.example.madproject.data.models.User
 import com.example.madproject.data.sources.ActivityService
 import com.example.madproject.data.sources.ContactService
 import com.example.madproject.data.sources.LocationService
 import com.example.madproject.data.sources.StatusService
 import com.example.madproject.data.sources.UserService
+import io.ktor.client.call.body
+import io.ktor.client.request.delete
+import io.ktor.client.request.get
+import io.ktor.client.request.post
+import io.ktor.client.request.put
 
 class ApiRepository (
-    private val userService: UserService = UserService(),
-    private val contactService: ContactService = ContactService(),
-    private val activityService: ActivityService = ActivityService(),
-    private val locationService: LocationService = LocationService(),
-    private val statusService: StatusService = StatusService(),
+    private val users: UserService = UserService(),
+    private val contacts: ContactService = ContactService(),
+    private val activities: ActivityService = ActivityService(),
+    private val locations: LocationService = LocationService(),
+    private val status: StatusService = StatusService(),
 ) {
-    suspend fun getUsers(): List<User> {
-        return userService.getUsers()
-    }
+    // User
+    suspend fun getUsers(): List<User> { return users.getUsers() }
+    suspend fun getUser(id: Int): User { return users.getUser(id) }
+    suspend fun getUserContacts(id: Int): List<User> { return users.getUserContacts(id) }
+    suspend fun createUser(user: User) { users.createUser(user) }
+    suspend fun updateUser(id: Int, user: User) { users.updateUser(id, user) }
+    suspend fun deleteUser(id: Int) { users.deleteUser(id) }
+
+    // Contact
+    suspend fun createContact() { contacts.createContact() }
+    suspend fun deleteContact(id: Int) { contacts.deleteContact(id) }
+
+    // Activity
+    suspend fun getActivities() { activities.getActivities() }
+    suspend fun getActivity(id: Int) { activities.getActivity(id) }
+    suspend fun getUserActivities(id: Int) { activities.getUserActivities(id) }
+    suspend fun createActivity(activity: Activity) { activities.createActivity(activity) }
+    suspend fun updateActivity(id: Int) { activities.updateActivity(id) }
+    suspend fun deleteActivity(id: Int) { activities.deleteActivity(id) }
+
+    // Location
+    suspend fun getLocations() { locations.getLocations() }
+    suspend fun getLocation(id: Int) { locations.getLocation(id) }
+    suspend fun createLocation(location: Location) { locations.createLocation(location) }
+    suspend fun updateLocation(id: Int) { locations.updateLocation(id) }
+    suspend fun deleteLocation(id: Int) { locations.deleteLocation(id) }
+
+    // Status
+    suspend fun getStatus() { status.getStatus() }
+    suspend fun getStatus(id: Int) { status.getStatus(id) }
 }
