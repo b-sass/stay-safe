@@ -87,6 +87,7 @@ dependencies {
     implementation(libs.androidx.ui.tooling.preview) // Compose UI tooling preview
     implementation(libs.androidx.material3) // Material 3 library for Compose
     implementation(libs.androidx.lifecycle.viewmodel.compose)
+    implementation(libs.androidx.navigation.compose)
     // Icons
     implementation(libs.androidx.material.icons.core)
     implementation(libs.androidx.material.icons.extended)

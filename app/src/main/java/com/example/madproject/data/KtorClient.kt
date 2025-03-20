@@ -15,6 +15,8 @@ object KtorClient {
         install(ContentNegotiation) {
             json(Json {
                 prettyPrint = true
+                ignoreUnknownKeys = true
+
             })
         }
     }

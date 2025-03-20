@@ -1,4 +1,4 @@
-package com.example.madproject
+package com.example.madproject.viewModel
 
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -9,7 +9,6 @@ import kotlinx.coroutines.launch
 
 class MapViewModel(): ViewModel() {
     var usersData = MutableLiveData<List<User>>()
-
 
     fun getUsers() {
         // Get users from the repository
