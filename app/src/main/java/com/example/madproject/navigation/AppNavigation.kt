@@ -4,7 +4,7 @@ import androidx.compose.runtime.Composable
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import com.example.madproject.view.MapView
+import com.example.madproject.view.*
 import kotlinx.serialization.Serializable
 
 @Composable
@@ -13,9 +13,12 @@ fun AppNavigation() {
 
     NavHost(
         navController = navController,
-        startDestination = MapView
+        startDestination = LoginView
     ) {
         composable<MapView> { MapView() }
+        composable<LoginView> { LoginView(
+            onLogin = { navController.navigate(MapView) }
+        ) }
     }
 }
 

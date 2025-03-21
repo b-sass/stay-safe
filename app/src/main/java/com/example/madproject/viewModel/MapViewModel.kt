@@ -1,5 +1,6 @@
 package com.example.madproject.viewModel
 
+import android.location.LocationManager
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
