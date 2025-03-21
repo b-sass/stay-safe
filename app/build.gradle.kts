@@ -109,6 +109,9 @@ dependencies {
     // Google Maps
     implementation(libs.maps.compose)
 
+    // Location
+    implementation(libs.accompanist.permissions)
+
     // Ktor
     implementation(libs.ktor.client.core)
     implementation(libs.ktor.client.cio)
