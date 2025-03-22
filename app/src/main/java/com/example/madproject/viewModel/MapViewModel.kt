@@ -11,6 +11,10 @@ import kotlinx.coroutines.launch
 class MapViewModel(): ViewModel() {
     var usersData = MutableLiveData<List<User>>()
 
+//    val userLocation = LocationManager().getCurrentLocation()
+        // Handle location updates
+
+
     fun getUsers() {
         // Get users from the repository
         viewModelScope.launch {

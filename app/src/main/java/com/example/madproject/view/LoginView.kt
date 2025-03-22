@@ -32,7 +32,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.PopupProperties
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.example.madproject.dialogs.UserDialog
 import com.example.madproject.dialogs.UserLoginDialog
 import com.example.madproject.viewModel.LoginViewModel
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
@@ -45,6 +44,7 @@ import kotlinx.coroutines.launch
 fun LoginView(
     viewModel: LoginViewModel = viewModel(),
     onLogin: () -> Unit,
+    onRegisterButtonClicked: () -> Unit,
 ) {
     val scope = rememberCoroutineScope()
     val locationPermissions = rememberMultiplePermissionsState(
@@ -54,6 +54,7 @@ fun LoginView(
         )
     )
     var userPicker by remember { mutableStateOf(false) }
+
 
     if (userPicker) {
         UserLoginDialog(
@@ -71,7 +72,9 @@ fun LoginView(
             ) {
                 Text("Choose Account")
                 Spacer(modifier = Modifier.height(4.dp))
-                Button(onClick = { userPicker = true }) { Text("Select user...")}
+                Button(onClick = { onRegisterButtonClicked() }) { Text("Register")}
+                Spacer(modifier = Modifier.height(4.dp))
+                Button(onClick = { userPicker = true }) { Text("Choose User")}
                 Spacer(modifier = Modifier.height(4.dp))
                 Button( onClick = { onLogin() } ) { Text("Login") }
             }
