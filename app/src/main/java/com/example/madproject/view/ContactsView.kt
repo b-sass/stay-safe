@@ -8,18 +8,13 @@ import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Edit
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.example.madproject.data.models.Contact
 
-// Function to get a list of contacts
+
 fun data(): List<Contact> {
     return listOf(
         Contact(id = 1, userID = "user 1", contactID = "contact 1", label = "John Doe"),
@@ -29,6 +24,7 @@ fun data(): List<Contact> {
         Contact(id = 5, userID = "user 5", contactID = "contact 5", label = "Charlie White")
     )
 }
+
 
 @Composable
 fun ContactCard(
@@ -66,19 +62,82 @@ fun ContactCard(
     }
 }
 
+
 @Composable
 fun ContactView() {
+
+    val contacts = remember { mutableStateListOf(*data().toTypedArray()) }
+    var isEditing by remember { mutableStateOf(false) }
+    var currentContact by remember { mutableStateOf<Contact?>(null) }
+
     LazyVerticalGrid(
         columns = GridCells.Fixed(2),
         modifier = Modifier.padding(8.dp)
     ) {
-        items(data()) { contact -> // Ensure getContacts() returns a List<Contact>
+        items(contacts) { contact ->
             ContactCard(
                 contact = contact,
-                onDelete = { /* Handle delete action */ },
-                onEdit = { /* Handle edit action */ },
+                onDelete = {
+                    contacts.remove(contact)
+                },
+                onEdit = {
+                    currentContact = contact
+                    isEditing = true
+                },
                 modifier = Modifier.padding(8.dp)
             )
         }
     }
+
+
+    if (isEditing && currentContact != null) {
+        EditContactDialog(
+            contact = currentContact!!,
+            onDismiss = { isEditing = false },
+            onUpdate = { updatedContact ->
+
+                val index = contacts.indexOfFirst { it.id == updatedContact.id }
+                if (index != -1) {
+                    contacts[index] = updatedContact
+                }
+                isEditing = false
+            }
+        )
+    }
+}
+
+
+@Composable
+fun EditContactDialog(
+    contact: Contact,
+    onDismiss: () -> Unit,
+    onUpdate: (Contact) -> Unit
+) {
+    var name by remember { mutableStateOf(contact.label) }
+    var userId by remember { mutableStateOf(contact.userID) }
+    var contactId by remember { mutableStateOf(contact.contactID) }
+
+    AlertDialog(
+        onDismissRequest = onDismiss,
+        title = { Text("Edit Contact") },
+        text = {
+            Column {
+                TextField(value = name, onValueChange = { name = it }, label = { Text("Name") })
+                TextField(value = userId, onValueChange = { userId = it }, label = { Text("User  ID") })
+                TextField(value = contactId, onValueChange = { contactId = it }, label = { Text("Contact ID") })
+            }
+        },
+        confirmButton = {
+            Button(onClick = {
+                onUpdate(contact.copy(label = name, userID = userId, contactID = contactId))
+            }) {
+                Text("Update")
+            }
+        },
+        dismissButton = {
+            Button(onClick = onDismiss) {
+                Text("Cancel")
+            }
+        }
+    )
 }
