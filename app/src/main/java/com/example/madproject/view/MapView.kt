@@ -42,12 +42,14 @@ import com.google.android.gms.maps.model.LatLng
 import com.google.maps.android.compose.ComposeMapColorScheme
 import com.google.maps.android.compose.MapUiSettings
 import androidx.compose.foundation.lazy.items
+import androidx.navigation.NavController
 import com.example.madproject.viewModel.MapViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MapView(
     viewModel: MapViewModel = viewModel(),
+    onContactsClicked: () -> Unit,
 ) {
     // Set the initial camera position
     val coroutineScope = rememberCoroutineScope()
@@ -61,6 +63,8 @@ fun MapView(
     val sheetState = rememberModalBottomSheetState(
 //        skipPartiallyExpanded = true
     )
+    var showContacts by remember { mutableStateOf(false) }
+    val contacts = data()
 
     val users by viewModel.usersData.asFlow().collectAsState(initial = emptyList())
     viewModel.getUsers()
@@ -72,7 +76,7 @@ fun MapView(
                 NavigationBarItem(
                     icon = { Icon(Icons.Outlined.Person, "Contacts") },
                     label = { Text("Contacts") },
-                    onClick = { /* Handle Contacts click */ },
+                    onClick = { onContactsClicked() },
                     selected = false
                 )
                 // Map
