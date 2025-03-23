@@ -14,6 +14,7 @@ import androidx.compose.material3.BasicAlertDialog
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -35,7 +36,8 @@ fun UserLoginDialog(
     onDismissRequest: () -> Unit = {},
     viewModel: LoginViewModel = viewModel()
 ) {
-    var selectedUser: User? by remember { mutableStateOf(viewModel.selectedUser) }
+    var username by remember { mutableStateOf("") }
+    var password by remember { mutableStateOf("") }
 
     BasicAlertDialog(
         onDismissRequest = onDismissRequest,
@@ -46,7 +48,7 @@ fun UserLoginDialog(
             Column(
             ) {
                 Text(
-                    text = "Pick a user.",
+                    text = "Log in to your account.",
                     modifier = Modifier
                         .padding(horizontal = 24.dp)
                         .padding(top = 24.dp)
@@ -54,25 +56,17 @@ fun UserLoginDialog(
                 )
                 HorizontalDivider()
 
-                LazyColumn (
-                    modifier = Modifier
-                        .padding(horizontal = 24.dp)
-                        .heightIn(max = 300.dp)
-                ) {
-                    items(viewModel.users) { user ->
-                        Row(
-                            verticalAlignment = Alignment.CenterVertically,
-                            horizontalArrangement = Arrangement.Start
-                        ) {
+                OutlinedTextField(
+                    value = username,
+                    onValueChange = { username = it } ,
+                    label = { Text("Username") },
+                )
 
-                            RadioButton(
-                                selected = (user.id == selectedUser?.id),
-                                onClick = { selectedUser = user }
-                            )
-                            Text(text = "User ${user.userName} | ${user.id}")
-                        }
-                    }
-                }
+                OutlinedTextField(
+                    value = password,
+                    onValueChange = { password = it } ,
+                    label = { Text("Password") },
+                )
 
                 HorizontalDivider()
                 Row(
@@ -89,9 +83,14 @@ fun UserLoginDialog(
                     )
                     Spacer(Modifier.padding(horizontal = 8.dp))
                     Text(
-                        text = "Select",
+                        text = "Sign in",
                         // Only delete book when delete button is clicked
-                        modifier = Modifier.clickable { viewModel.selectedUser = selectedUser; onDismissRequest() }
+                        modifier = Modifier.clickable {
+                            val currentUser = viewModel.getUserWithCredentials(username, password)
+                            currentUser?.let {
+                                onDismissRequest()
+                            }
+                        }
                     )
                 }
             }
