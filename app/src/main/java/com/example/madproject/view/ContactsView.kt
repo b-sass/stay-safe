@@ -10,9 +10,13 @@ import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.example.madproject.data.models.Contact
+import kotlinx.coroutines.launch
+
+// Assuming the Contact class has a dateCreated property
 
 
 fun data(): List<Contact> {
@@ -24,7 +28,6 @@ fun data(): List<Contact> {
         Contact(id = 5, userID = "user 5", contactID = "contact 5", label = "Charlie White")
     )
 }
-
 
 @Composable
 fun ContactCard(
@@ -62,50 +65,88 @@ fun ContactCard(
     }
 }
 
-
 @Composable
 fun ContactView() {
-
     val contacts = remember { mutableStateListOf(*data().toTypedArray()) }
     var isEditing by remember { mutableStateOf(false) }
     var currentContact by remember { mutableStateOf<Contact?>(null) }
+    var showAdd by remember { mutableStateOf(false) }
+    val snackbarHostState = remember { SnackbarHostState() }
+    val coroutineScope = rememberCoroutineScope()
 
-    LazyVerticalGrid(
-        columns = GridCells.Fixed(2),
-        modifier = Modifier.padding(8.dp)
+    // Use a Column to stack items vertically
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(8.dp)
     ) {
-        items(contacts) { contact ->
-            ContactCard(
-                contact = contact,
-                onDelete = {
-                    contacts.remove(contact)
-                },
-                onEdit = {
-                    currentContact = contact
-                    isEditing = true
-                },
-                modifier = Modifier.padding(8.dp)
+        // LazyVerticalGrid for displaying contacts
+        LazyVerticalGrid(
+            columns = GridCells.Fixed(2),
+            modifier = Modifier.weight(1f) // Take up available space
+        ) {
+            items(contacts) { contact ->
+                ContactCard(
+                    contact = contact,
+                    onDelete = {
+                        contacts.remove(contact)
+                        coroutineScope.launch {
+                            snackbarHostState.showSnackbar("Contact deleted: ${contact.label}")
+                        }
+                    },
+                    onEdit = {
+                        currentContact = contact
+                        isEditing = true
+                    },
+                    modifier = Modifier.padding(8.dp)
+                )
+            }
+        }
+
+        // Add Contact Button at the bottom
+        Button(
+            onClick = { showAdd = true },
+            modifier = Modifier.align(Alignment.End) // Align to the end (right)
+        ) {
+            Text("Add Contact")
+        }
+
+        // Show Edit Contact Dialog if needed
+        if (isEditing && currentContact != null) {
+            EditContactDialog(
+                contact = currentContact!!,
+                onDismiss = { isEditing = false },
+                onUpdate = { updatedContact ->
+                    val index = contacts.indexOfFirst { it.id == updatedContact.id }
+                    if (index != -1) {
+                        contacts[index] = updatedContact
+                        coroutineScope.launch {
+                            snackbarHostState.showSnackbar("Contact updated: ${updatedContact.label}")
+                        }
+                    }
+                    isEditing = false
+                }
             )
         }
-    }
 
-
-    if (isEditing && currentContact != null) {
-        EditContactDialog(
-            contact = currentContact!!,
-            onDismiss = { isEditing = false },
-            onUpdate = { updatedContact ->
-
-                val index = contacts.indexOfFirst { it.id == updatedContact.id }
-                if (index != -1) {
-                    contacts[index] = updatedContact
+        // Show Add Contact Dialog if needed
+        if (showAdd) {
+            AddContactButton(
+                onDismiss = { showAdd = false },
+                onAdd = { newContact ->
+                    contacts.add(newContact)
+                    coroutineScope.launch {
+                        snackbarHostState.showSnackbar("Contact added: ${newContact.label}")
+                    }
+                    showAdd = false
                 }
-                isEditing = false
-            }
-        )
+            )
+        }
+
+        // Snackbar Host
+        SnackbarHost(hostState = snackbarHostState)
     }
 }
-
 
 @Composable
 fun EditContactDialog(
@@ -132,6 +173,41 @@ fun EditContactDialog(
                 onUpdate(contact.copy(label = name, userID = userId, contactID = contactId))
             }) {
                 Text("Update")
+            }
+        },
+        dismissButton = {
+            Button(onClick = onDismiss) {
+                Text("Cancel")
+            }
+        }
+    )
+}
+
+@Composable
+fun AddContactButton(
+    onDismiss: () -> Unit,
+    onAdd: (Contact) -> Unit
+) {
+    var name by remember { mutableStateOf("") }
+    var userId by remember { mutableStateOf("") }
+    var contactId by remember { mutableStateOf("") }
+
+    AlertDialog(
+        onDismissRequest = onDismiss,
+        title = { Text("Add Contact") },
+        text = {
+            Column {
+                TextField(value = name, onValueChange = { name = it }, label = { Text("Name") })
+                TextField(value = userId, onValueChange = { userId = it }, label = { Text("User  ID") })
+                TextField(value = contactId, onValueChange = { contactId = it }, label = { Text("Contact ID") })
+            }
+        },
+        confirmButton = {
+            Button(onClick = {
+                onAdd(Contact(0, name, userId, contactId))
+                onDismiss()
+            }) {
+                Text("Add")
             }
         },
         dismissButton = {
