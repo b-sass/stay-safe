@@ -7,6 +7,7 @@ plugins {
     alias(libs.plugins.compose.compiler)
     id("com.google.devtools.ksp")
     id("com.google.android.libraries.mapsplatform.secrets-gradle-plugin")
+    kotlin("plugin.serialization") version "2.1.0"
 }
 
 secrets {
@@ -85,6 +86,11 @@ dependencies {
     implementation(libs.androidx.ui.graphics) // Compose UI graphics library
     implementation(libs.androidx.ui.tooling.preview) // Compose UI tooling preview
     implementation(libs.androidx.material3) // Material 3 library for Compose
+    implementation(libs.androidx.lifecycle.viewmodel.compose)
+    implementation(libs.androidx.navigation.compose)
+    // Icons
+    implementation(libs.androidx.material.icons.core)
+    implementation(libs.androidx.material.icons.extended)
 
     // Testing dependencies
     testImplementation(libs.junit) // JUnit for unit testing
@@ -102,4 +108,11 @@ dependencies {
 
     // Google Maps
     implementation(libs.maps.compose)
+
+    // Ktor
+    implementation(libs.ktor.client.core)
+    implementation(libs.ktor.client.cio)
+    implementation(libs.ktor.client.content.negotiation)
+    implementation(libs.ktor.serialization.kotlinx.json)
+
 }
