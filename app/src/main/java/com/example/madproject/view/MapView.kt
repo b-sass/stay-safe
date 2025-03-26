@@ -50,18 +50,21 @@ import com.example.madproject.viewModel.MapViewModel
 fun MapView(
     viewModel: MapViewModel = viewModel(),
     onContactsClicked: () -> Unit,
-    onActivitiesClicked: () -> Unit // New callback for Activities
 ) {
     // Set the initial camera position
+    val coroutineScope = rememberCoroutineScope()
     val cameraPositionState = rememberCameraPositionState {
         position = CameraPosition.fromLatLngZoom(
-            LatLng(51.5074, -0.1278), // Initial position (London)
+            LatLng(51.5074, -0.1278),
             10f
-        )
+        ) // Initial position (London)
     }
-
-    // Use var for mutable state
     var showBottomSheet by remember { mutableStateOf(false) }
+    val sheetState = rememberModalBottomSheetState(
+//        skipPartiallyExpanded = true
+    )
+    var showContacts by remember { mutableStateOf(false) }
+    val contacts = data()
 
     val users by viewModel.usersData.asFlow().collectAsState(initial = emptyList())
     viewModel.getUsers()
@@ -80,14 +83,14 @@ fun MapView(
                 NavigationBarItem(
                     icon = { Icon(Icons.Filled.LocationOn, "Map") },
                     label = { Text("Map") },
-                    onClick = { /* Handle Map click */ },
+                    onClick = { /* Handle Home click */ },
                     selected = true
                 )
-                // Activities
+                // Settings
                 NavigationBarItem(
-                    icon = { Icon(Icons.Filled.LocationOn, "Activities") },
+                    icon = { Icon(Icons.AutoMirrored.Outlined.DirectionsWalk, "Activities") },
                     label = { Text("Activities") },
-                    onClick = { onActivitiesClicked() }, // Navigate to Activities
+                    onClick = { showBottomSheet = true },
                     selected = false
                 )
             }
@@ -100,6 +103,7 @@ fun MapView(
             GoogleMap(
                 modifier = Modifier.fillMaxSize(),
                 cameraPositionState = cameraPositionState,
+                mapColorScheme = ComposeMapColorScheme.FOLLOW_SYSTEM,
                 uiSettings = MapUiSettings(
                     zoomControlsEnabled = false,
                 )
@@ -109,7 +113,8 @@ fun MapView(
         }
         if (showBottomSheet) {
             ModalBottomSheet(
-                onDismissRequest = { showBottomSheet = false }
+                onDismissRequest = { showBottomSheet = false },
+                sheetState = sheetState,
             ) {
                 Column {
                     LazyColumn {
@@ -122,6 +127,7 @@ fun MapView(
                                 Spacer(modifier = Modifier.padding(4.dp))
                                 Text("Contact ${user.userName}", fontSize = 32.sp)
                             }
+                            HorizontalDivider()
                         }
                     }
                 }

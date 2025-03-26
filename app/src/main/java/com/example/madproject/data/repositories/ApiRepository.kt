@@ -8,11 +8,6 @@ import com.example.madproject.data.sources.ContactService
 import com.example.madproject.data.sources.LocationService
 import com.example.madproject.data.sources.StatusService
 import com.example.madproject.data.sources.UserService
-import io.ktor.client.call.body
-import io.ktor.client.request.delete
-import io.ktor.client.request.get
-import io.ktor.client.request.post
-import io.ktor.client.request.put
 
 class ApiRepository (
     private val users: UserService = UserService(),
