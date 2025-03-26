@@ -1,20 +1,14 @@
-package com.example.madproject.view // Change this to your actual package name
+package com.example.madproject.view
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.outlined.DirectionsWalk
 import androidx.compose.material.icons.filled.LocationOn
-import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.outlined.Person
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.NavigationBar
@@ -23,17 +17,12 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
-import androidx.lifecycle.asFlow
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.google.android.gms.maps.model.CameraPosition
 import com.google.maps.android.compose.GoogleMap
@@ -48,9 +37,12 @@ import com.example.madproject.viewModel.MapViewModel
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MapView(
+    userID: Int,
     viewModel: MapViewModel = viewModel(),
     onContactsClicked: () -> Unit,
 ) {
+    viewModel.getUser(userID)
+
     // Set the initial camera position
     val coroutineScope = rememberCoroutineScope()
     val cameraPositionState = rememberCameraPositionState {
@@ -66,8 +58,7 @@ fun MapView(
     var showContacts by remember { mutableStateOf(false) }
     val contacts = data()
 
-    val users by viewModel.usersData.asFlow().collectAsState(initial = emptyList())
-    viewModel.getUsers()
+    val currentUser = remember { mutableStateOf(viewModel.currentUser) }
 
     Scaffold(
         bottomBar = {
@@ -117,19 +108,7 @@ fun MapView(
                 sheetState = sheetState,
             ) {
                 Column {
-                    LazyColumn {
-                        items(users.toList()) { user ->
-                            Row(
-                                verticalAlignment = Alignment.CenterVertically,
-                                modifier = Modifier.padding(horizontal = 4.dp, vertical = 8.dp)
-                            ) {
-                                Icon(Icons.Filled.Person, "Contact", modifier = Modifier.size(32.dp))
-                                Spacer(modifier = Modifier.padding(4.dp))
-                                Text("Contact ${user.userName}", fontSize = 32.sp)
-                            }
-                            HorizontalDivider()
-                        }
-                    }
+                    currentUser.value
                 }
             }
         }
