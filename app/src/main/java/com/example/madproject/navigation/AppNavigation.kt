@@ -1,6 +1,7 @@
 package com.example.madproject.navigation
 
 import android.content.Context
+import android.util.Log.d
 import androidx.compose.runtime.Composable
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -8,6 +9,7 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.toRoute
 import com.example.madproject.view.*
 import kotlinx.serialization.Serializable
+import com.example.madproject.view.data
 
 @Composable
 fun AppNavigation(ctx: Context) {
@@ -21,6 +23,7 @@ fun AppNavigation(ctx: Context) {
             val args = backStackEntry.toRoute<Map>()
             MapView(
                 userID = args.userID,
+                onContactsClicked = {navController.navigate(Contact)}
             )
         }
         composable<Login> { LoginView(
@@ -31,6 +34,7 @@ fun AppNavigation(ctx: Context) {
             ctx = ctx,
             onDismissRequest = { navController.popBackStack() },
         ) }
+        composable<Contact> { ContactView() }
     }
 }
 
@@ -42,3 +46,5 @@ data class Map (
 object Login
 @Serializable
 object Register
+@Serializable
+object Contact

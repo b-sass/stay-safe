@@ -30,6 +30,8 @@ import com.google.maps.android.compose.rememberCameraPositionState
 import com.google.android.gms.maps.model.LatLng
 import com.google.maps.android.compose.ComposeMapColorScheme
 import com.google.maps.android.compose.MapUiSettings
+import androidx.compose.foundation.lazy.items
+import androidx.navigation.NavController
 import com.example.madproject.viewModel.MapViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -37,6 +39,7 @@ import com.example.madproject.viewModel.MapViewModel
 fun MapView(
     userID: Int,
     viewModel: MapViewModel = viewModel(),
+    onContactsClicked: () -> Unit,
 ) {
     viewModel.getUser(userID)
 
@@ -52,6 +55,8 @@ fun MapView(
     val sheetState = rememberModalBottomSheetState(
 //        skipPartiallyExpanded = true
     )
+    var showContacts by remember { mutableStateOf(false) }
+    val contacts = data()
 
     val currentUser = remember { mutableStateOf(viewModel.currentUser) }
 
@@ -62,7 +67,7 @@ fun MapView(
                 NavigationBarItem(
                     icon = { Icon(Icons.Outlined.Person, "Contacts") },
                     label = { Text("Contacts") },
-                    onClick = { /* Handle Contacts click */ },
+                    onClick = { onContactsClicked() },
                     selected = false
                 )
                 // Map
