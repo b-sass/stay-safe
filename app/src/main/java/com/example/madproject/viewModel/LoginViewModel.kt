@@ -10,6 +10,7 @@ import kotlinx.coroutines.launch
 class LoginViewModel: ViewModel() {
     val api = ApiRepository()
     var users: List<User> = mutableStateListOf<User>()
+    var loggedInUser: User? = null
 
     init {
         getUsers()
@@ -21,7 +22,7 @@ class LoginViewModel: ViewModel() {
         }
     }
 
-    fun getUserWithCredentials(userName: String, password: String): User? {
-        return users.find { it.userName == userName && it.password == password }
+    fun getUserWithCredentials(userName: String, password: String) {
+        loggedInUser = users.find { it.userName == userName && it.password == password }
     }
 }

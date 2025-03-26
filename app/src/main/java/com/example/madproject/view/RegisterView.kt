@@ -8,10 +8,14 @@ import android.location.LocationRequest
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -71,54 +75,23 @@ fun RegisterView(
         )
     }
 
-    Scaffold(
-        topBar = { TopAppBar(
-            title = { "Create user" },
-            navigationIcon = {
-                // Back
-                IconButton(
-                    onClick = { onDismissRequest() }
-                ) { Icon(Icons.AutoMirrored.Filled.ArrowBack, "Back arrow") }
-            },
-            actions = {
-                Text(
-                    text = "Create",
-                    modifier = Modifier.padding(end = 8.dp)
-                        .clickable(onClick = {
-                            var lat = 0.0
-                            var lon = 0.0
-
-                            if (ctx.checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
-                                locationProvider.lastLocation.addOnSuccessListener { location: Location? ->
-                                    val newUser = User(
-                                        firstName = firstName,
-                                        lastName = lastName,
-                                        userName = username,
-                                        phone = phoneNumber,
-                                        password = password,
-                                        latitude = lat,
-                                        longitude = lon
-                                    )
-
-                                    scope.launch {
-                                        api.createUser(newUser)
-                                    }
-
-                                    message = "User created successfully."
-                                    messageDialog = true
-                                }
-                            }
-                        }
-                    )
-                )
-            }
-        )}
-    ) { innerPadding ->
+    Scaffold { innerPadding ->
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
-            modifier = Modifier.padding(innerPadding).fillMaxWidth()
+            verticalArrangement = androidx.compose.foundation.layout.Arrangement.Center,
+            modifier = Modifier.padding(innerPadding)
+                .fillMaxSize()
         ) {
-            Row {
+            Text("Stay Safe")
+            Text("Create an account")
+
+            Column(
+                horizontalAlignment = Alignment.CenterHorizontally,
+                modifier = Modifier.padding(innerPadding)
+                    .padding(top = 24.dp)
+                    .padding(horizontal = 24.dp)
+                    .padding(bottom = 4.dp)
+            ) {
                 // First Name
                 OutlinedTextField(
                     value = firstName,
@@ -132,28 +105,62 @@ fun RegisterView(
                     onValueChange = { lastName = it },
                     label = { Text("Last Name") }
                 )
+
+                // Username
+                OutlinedTextField(
+                    value = username,
+                    onValueChange = { username = it },
+                    label = { Text("Username") }
+                )
+
+                // Password
+                OutlinedTextField(
+                    value = password,
+                    onValueChange = { password = it },
+                    label = { Text("Password") }
+                )
+                // Phone number
+                OutlinedTextField(
+                    value = phoneNumber,
+                    onValueChange = { phoneNumber = it },
+                    label = { Text("Phone number") }
+                )
             }
 
-            // Username
-            OutlinedTextField(
-                value = username,
-                onValueChange = { username = it },
-                label = { Text("Username") }
-            )
+            Button(
+                onClick = {
+                    var lat = 0.0
+                    var lon = 0.0
 
-            // Password
-            OutlinedTextField(
-                value = password,
-                onValueChange = { password = it },
-                label = { Text("Password") }
-            )
-            // Phone number
-            OutlinedTextField(
-                value = phoneNumber,
-                onValueChange = { phoneNumber = it },
-                label = { Text("Phone number") }
-            )
+                    if (ctx.checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+                        locationProvider.lastLocation.addOnSuccessListener { location: Location? ->
+                            val newUser = User(
+                                firstName = firstName,
+                                lastName = lastName,
+                                userName = username,
+                                phone = phoneNumber,
+                                password = password,
+                                latitude = lat,
+                                longitude = lon
+                            )
+
+                            scope.launch {
+                                api.createUser(newUser)
+                            }
+
+                            message = "User created successfully."
+                            messageDialog = true
+                        }
+                    }
+                }
+            ) { Text("Register") }
+            Spacer(modifier = Modifier.padding(4.dp))
+
+            Text("Already have an account?")
+            Spacer(modifier = Modifier.padding(4.dp))
+            Button(
+                onClick = { onDismissRequest() }
+            ) { Text("Login") }
         }
     }
-
 }

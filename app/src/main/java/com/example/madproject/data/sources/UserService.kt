@@ -22,7 +22,8 @@ class UserService(
     }
 
     suspend fun getUser(id: Int): User {
-        return client.get("users/$id").body()
+        val users: List<User> =  client.get("users/$id").body()
+        return users[0]
     }
 
     suspend fun getUserContacts(id: Int): List<User> {

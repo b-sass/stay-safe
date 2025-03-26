@@ -5,6 +5,7 @@ import androidx.compose.runtime.Composable
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.toRoute
 import com.example.madproject.view.*
 import kotlinx.serialization.Serializable
 
@@ -14,14 +15,19 @@ fun AppNavigation(ctx: Context) {
 
     NavHost(
         navController = navController,
-        startDestination = LoginView
+        startDestination = Login
     ) {
-        composable<MapView> { MapView() }
-        composable<LoginView> { LoginView(
-            onLogin = { navController.navigate(MapView) },
-            onRegisterButtonClicked = { navController.navigate(RegisterView) }
+        composable<Map> { backStackEntry ->
+            val args = backStackEntry.toRoute<Map>()
+            MapView(
+                userID = args.userID,
+            )
+        }
+        composable<Login> { LoginView(
+            onLogin = { navController.navigate(Map(it)) },
+            onRegisterButtonClicked = { navController.navigate(Register) }
         ) }
-        composable<RegisterView> { RegisterView(
+        composable<Register> { RegisterView(
             ctx = ctx,
             onDismissRequest = { navController.popBackStack() },
         ) }
@@ -29,8 +35,10 @@ fun AppNavigation(ctx: Context) {
 }
 
 @Serializable
-object MapView
+data class Map (
+    val userID: Int
+)
 @Serializable
-object LoginView
+object Login
 @Serializable
-object RegisterView
+object Register

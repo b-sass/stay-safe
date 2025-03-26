@@ -47,8 +47,11 @@ import com.example.madproject.viewModel.MapViewModel
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MapView(
+    userID: Int,
     viewModel: MapViewModel = viewModel(),
 ) {
+    viewModel.getUser(userID)
+
     // Set the initial camera position
     val coroutineScope = rememberCoroutineScope()
     val cameraPositionState = rememberCameraPositionState {
@@ -62,8 +65,7 @@ fun MapView(
 //        skipPartiallyExpanded = true
     )
 
-    val users by viewModel.usersData.asFlow().collectAsState(initial = emptyList())
-    viewModel.getUsers()
+    val currentUser = remember { mutableStateOf(viewModel.currentUser) }
 
     Scaffold(
         bottomBar = {
@@ -113,19 +115,7 @@ fun MapView(
                 sheetState = sheetState,
             ) {
                 Column {
-                    LazyColumn {
-                        items(users.toList()) { user ->
-                            Row(
-                                verticalAlignment = Alignment.CenterVertically,
-                                modifier = Modifier.padding(horizontal = 4.dp, vertical = 8.dp)
-                            ) {
-                                Icon(Icons.Filled.Person, "Contact", modifier = Modifier.size(32.dp))
-                                Spacer(modifier = Modifier.padding(4.dp))
-                                Text("Contact ${user.userName}", fontSize = 32.sp)
-                            }
-                            HorizontalDivider()
-                        }
-                    }
+                    currentUser.value
                 }
             }
         }
