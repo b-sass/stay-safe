@@ -5,6 +5,7 @@ import androidx.compose.runtime.Composable
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.example.madproject.view.ActivityView
 import com.example.madproject.view.ContactView
 import com.example.madproject.view.MapView
 import kotlinx.serialization.Serializable
@@ -21,6 +22,7 @@ fun AppNavigation() {
             onContactsClicked = {navController.navigate(ContactView)}
         ) }
         composable<ContactView> { ContactView() }
+        composable <ActivityView> { ActivityView() }
     }
 }
 
@@ -30,3 +32,5 @@ object MapView
 object LoginView
 @Serializable
 object ContactView
+@Serializable
+object ActivityView

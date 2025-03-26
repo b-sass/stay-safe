@@ -14,7 +14,7 @@ class MainActivity : ComponentActivity() {
         setContent {
             enableEdgeToEdge()
             MadProjectTheme {
-                AppNavigation(application.applicationContext)
+                AppNavigation()
             }
         }
     }
