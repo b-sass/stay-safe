@@ -2,7 +2,6 @@ package com.example.madproject.data.models
 
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.SerialName
-import kotlinx.serialization.json.Json
 import java.util.Date
 
 @Serializable

@@ -35,8 +35,6 @@ fun LoginView(
     var username by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
 
-
-
     val locationPermissions = rememberMultiplePermissionsState(
         listOf(
             android.Manifest.permission.ACCESS_FINE_LOCATION,
