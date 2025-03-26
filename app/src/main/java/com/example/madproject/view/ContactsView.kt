@@ -74,16 +74,16 @@ fun ContactView() {
     val snackbarHostState = remember { SnackbarHostState() }
     val coroutineScope = rememberCoroutineScope()
 
-    // Use a Column to stack items vertically
+
     Column(
         modifier = Modifier
             .fillMaxSize()
             .padding(8.dp)
     ) {
-        // LazyVerticalGrid for displaying contacts
+
         LazyVerticalGrid(
             columns = GridCells.Fixed(2),
-            modifier = Modifier.weight(1f) // Take up available space
+            modifier = Modifier.weight(1f)
         ) {
             items(contacts) { contact ->
                 ContactCard(
@@ -103,15 +103,15 @@ fun ContactView() {
             }
         }
 
-        // Add Contact Button at the bottom
+
         Button(
             onClick = { showAdd = true },
-            modifier = Modifier.align(Alignment.End) // Align to the end (right)
+            modifier = Modifier.align(Alignment.End)
         ) {
             Text("Add Contact")
         }
 
-        // Show Edit Contact Dialog if needed
+
         if (isEditing && currentContact != null) {
             EditContactDialog(
                 contact = currentContact!!,
@@ -129,7 +129,7 @@ fun ContactView() {
             )
         }
 
-        // Show Add Contact Dialog if needed
+
         if (showAdd) {
             AddContactButton(
                 onDismiss = { showAdd = false },
@@ -143,7 +143,7 @@ fun ContactView() {
             )
         }
 
-        // Snackbar Host
+
         SnackbarHost(hostState = snackbarHostState)
     }
 }
