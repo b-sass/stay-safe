@@ -39,6 +39,7 @@ fun MapView(
     ctx: Context,
     onActivitiesClicked: () -> Unit,
     onContactsClicked: () -> Unit,
+    onSettingsClicked: () -> Unit
 ) {
     val scope = rememberCoroutineScope()
     val locationPermissions = rememberMultiplePermissionsState(
@@ -101,6 +102,13 @@ fun MapView(
                     icon = { Icon(Icons.AutoMirrored.Outlined.DirectionsWalk, contentDescription = "Activities") },
                     label = { Text("Activities") },
                     onClick = { onActivitiesClicked() },
+                    selected = false
+                )
+                // Settings
+                NavigationBarItem(
+                    icon = { Icon(Icons.Filled.Person, contentDescription = "Settings") },
+                    label = {Text("Settings")},
+                    onClick = { onSettingsClicked()},
                     selected = false
                 )
             }

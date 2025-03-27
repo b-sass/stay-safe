@@ -23,7 +23,8 @@ fun AppNavigation(ctx: Context) {
                 userID = args.userID,
                 ctx = ctx,
                 onContactsClicked = { navController.navigate(Contact) },
-                onActivitiesClicked = { navController.navigate(Activity) }
+                onActivitiesClicked = { navController.navigate(Activity) },
+                onSettingsClicked = { navController.navigate(Settings) }
             )
         }
         composable<Login> { LoginView(
@@ -36,6 +37,7 @@ fun AppNavigation(ctx: Context) {
         ) }
         composable<Contact> { ContactView() }
         composable <Activity> { ActivityView() }
+        composable <Settings> { SettingsView(UserID = 1) }
     }
 }
 
@@ -51,3 +53,5 @@ object Contact
 object Activity
 @Serializable
 object Register
+@Serializable
+object Settings
