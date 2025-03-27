@@ -1,50 +1,36 @@
 package com.example.madproject.navigation
 
-import android.content.Context
 import android.util.Log.d
 import androidx.compose.runtime.Composable
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import androidx.navigation.toRoute
-import com.example.madproject.view.*
+import com.example.madproject.view.ActivityView
+import com.example.madproject.view.ContactView
+import com.example.madproject.view.MapView
 import kotlinx.serialization.Serializable
 import com.example.madproject.view.data
-
 @Composable
-fun AppNavigation(ctx: Context) {
+fun AppNavigation() {
     val navController = rememberNavController()
 
     NavHost(
         navController = navController,
-        startDestination = Login
+        startDestination = MapView
     ) {
-        composable<Map> { backStackEntry ->
-            val args = backStackEntry.toRoute<Map>()
-            MapView(
-                userID = args.userID,
-                onContactsClicked = {navController.navigate(Contact)}
-            )
-        }
-        composable<Login> { LoginView(
-            onLogin = { navController.navigate(Map(it)) },
-            onRegisterButtonClicked = { navController.navigate(Register) }
+        composable<MapView> { MapView(
+            onContactsClicked = {navController.navigate(ContactView)}
         ) }
-        composable<Register> { RegisterView(
-            ctx = ctx,
-            onDismissRequest = { navController.popBackStack() },
-        ) }
-        composable<Contact> { ContactView() }
+        composable<ContactView> { ContactView() }
+        composable <ActivityView> { ActivityView() }
     }
 }
 
 @Serializable
-data class Map (
-    val userID: Int
-)
+object MapView
 @Serializable
-object Login
+object LoginView
 @Serializable
-object Register
+object ContactView
 @Serializable
-object Contact
+object ActivityView
