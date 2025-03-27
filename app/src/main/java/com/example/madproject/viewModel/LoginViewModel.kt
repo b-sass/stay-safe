@@ -12,10 +12,6 @@ class LoginViewModel: ViewModel() {
     var users: List<User> = mutableStateListOf<User>()
     var loggedInUser: User? = null
 
-    init {
-        getUsers()
-    }
-
     fun getUsers() {
         viewModelScope.launch {
             users = api.getUsers()
