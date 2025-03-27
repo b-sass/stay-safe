@@ -23,7 +23,8 @@ fun AppNavigation(ctx: Context) {
             val args = backStackEntry.toRoute<Map>()
             MapView(
                 userID = args.userID,
-                onContactsClicked = {navController.navigate(Contact)}
+                ctx = ctx,
+                onContactsClicked = { navController.navigate(Contact) }
             )
         }
         composable<Login> { LoginView(

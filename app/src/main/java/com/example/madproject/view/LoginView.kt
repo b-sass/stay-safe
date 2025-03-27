@@ -32,8 +32,10 @@ fun LoginView(
     onLogin: (userID: Int) -> Unit,
     onRegisterButtonClicked: () -> Unit,
 ) {
-    var username by remember { mutableStateOf("") }
-    var password by remember { mutableStateOf("") }
+    viewModel.getUsers()
+
+    var username by remember { mutableStateOf("niceusername") }
+    var password by remember { mutableStateOf("password123") }
 
     val locationPermissions = rememberMultiplePermissionsState(
         listOf(

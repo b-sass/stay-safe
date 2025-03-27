@@ -1,5 +1,11 @@
 package com.example.madproject.view
 
+import android.Manifest
+import android.content.Context
+import android.content.pm.PackageManager
+import android.location.Location
+import android.location.LocationProvider
+import android.util.Log
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -17,12 +23,15 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.google.android.gms.maps.model.CameraPosition
 import com.google.maps.android.compose.GoogleMap
@@ -30,35 +39,63 @@ import com.google.maps.android.compose.rememberCameraPositionState
 import com.google.android.gms.maps.model.LatLng
 import com.google.maps.android.compose.ComposeMapColorScheme
 import com.google.maps.android.compose.MapUiSettings
-import androidx.compose.foundation.lazy.items
-import androidx.navigation.NavController
 import com.example.madproject.viewModel.MapViewModel
+import com.google.accompanist.permissions.ExperimentalPermissionsApi
+import com.google.accompanist.permissions.rememberMultiplePermissionsState
+import com.google.android.gms.location.CurrentLocationRequest
+import com.google.android.gms.location.LocationServices
+import com.google.android.gms.maps.GoogleMapOptions
+import com.google.android.gms.maps.LocationSource
+import com.google.maps.android.compose.Circle
+import com.google.maps.android.compose.MapProperties
+import com.google.maps.android.compose.Marker
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalPermissionsApi::class)
 @Composable
 fun MapView(
     userID: Int,
     viewModel: MapViewModel = viewModel(),
+    ctx: Context,
     onContactsClicked: () -> Unit,
 ) {
+    val scope = rememberCoroutineScope()
+    val locationPermissions = rememberMultiplePermissionsState(
+        listOf(
+            android.Manifest.permission.ACCESS_FINE_LOCATION,
+            android.Manifest.permission.ACCESS_COARSE_LOCATION
+        )
+    )
+    var showBottomSheet by remember { mutableStateOf(false) }
+    val sheetState = rememberModalBottomSheetState()
+
+    val currentLocation by viewModel.currentLocation.collectAsStateWithLifecycle()
+
+    var location by remember { mutableStateOf<Location?>(null) }
+
+    LaunchedEffect(currentLocation) {
+        viewModel.getCurrentLocation(ctx)
+        location = currentLocation
+    }
+
+    Log.d("MapView", "ViewModel Location: $currentLocation")
+
     viewModel.getUser(userID)
 
+    Log.d("MapView", "Starting Location: $location")
+
+    val currentUser = viewModel.currentUser
+
     // Set the initial camera position
-    val coroutineScope = rememberCoroutineScope()
     val cameraPositionState = rememberCameraPositionState {
         position = CameraPosition.fromLatLngZoom(
-            LatLng(51.5074, -0.1278),
-            10f
-        ) // Initial position (London)
+            LatLng(location?.latitude ?: 51.51 , location?.longitude ?: -0.13),
+            location?.let { 20f } ?: 10f
+        )
     }
-    var showBottomSheet by remember { mutableStateOf(false) }
-    val sheetState = rememberModalBottomSheetState(
-//        skipPartiallyExpanded = true
-    )
-    var showContacts by remember { mutableStateOf(false) }
-    val contacts = data()
 
-    val currentUser = remember { mutableStateOf(viewModel.currentUser) }
+    Log.d("MapView", "User: ${currentUser.value}")
 
     Scaffold(
         bottomBar = {
@@ -97,7 +134,8 @@ fun MapView(
                 mapColorScheme = ComposeMapColorScheme.FOLLOW_SYSTEM,
                 uiSettings = MapUiSettings(
                     zoomControlsEnabled = false,
-                )
+                ),
+                properties = MapProperties(isMyLocationEnabled = true)
             ) {
                 // You can add markers or other map elements here
             }
@@ -108,7 +146,7 @@ fun MapView(
                 sheetState = sheetState,
             ) {
                 Column {
-                    currentUser.value
+                    Text("$location")
                 }
             }
         }
