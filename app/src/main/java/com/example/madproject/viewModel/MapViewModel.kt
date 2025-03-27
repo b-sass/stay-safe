@@ -32,10 +32,19 @@ class MapViewModel(
     private val _currentLocation = MutableStateFlow<Location?>(null)
     var currentLocation = _currentLocation.asStateFlow()
 
+    private val _userContacts = MutableStateFlow<List<User>>(emptyList())
+    var userContacts = _userContacts.asStateFlow()
+
     fun getUser(userID: Int) {
         viewModelScope.launch {
             currentUser.value = api.getUser(userID)
         }
+    }
+
+    fun getUserContacts(userID: Int) {
+//        viewModelScope.launch {
+//            _userContacts.value = api.getUserContacts(userID)
+//        }
     }
 
     fun updateLocation(lat: Double, lon: Double) {

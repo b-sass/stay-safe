@@ -1,27 +1,29 @@
 package com.example.madproject.navigation
 
-import android.util.Log.d
+import android.content.Context
 import androidx.compose.runtime.Composable
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.toRoute
 import com.example.madproject.view.*
 import kotlinx.serialization.Serializable
 
 @Composable
-fun AppNavigation() {
+fun AppNavigation(ctx: Context) {
     val navController = rememberNavController()
 
     NavHost(
         navController = navController,
-        startDestination = MapView
+        startDestination = Login
     ) {
         composable<Map> { backStackEntry ->
             val args = backStackEntry.toRoute<Map>()
             MapView(
                 userID = args.userID,
                 ctx = ctx,
-                onContactsClicked = { navController.navigate(Contact) }
+                onContactsClicked = { navController.navigate(Contact) },
+                onActivitiesClicked = { navController.navigate(Activity) }
             )
         }
         composable<Login> { LoginView(
@@ -32,16 +34,20 @@ fun AppNavigation() {
             ctx = ctx,
             onDismissRequest = { navController.popBackStack() },
         ) }
-        composable<ContactView> { Contact() }
-        composable <ActivityView> { Activity() }
+        composable<Contact> { ContactView() }
+        composable <Activity> { ActivityView() }
     }
 }
 
 @Serializable
-object Map
+data class Map (
+    val userID: Int
+)
 @Serializable
 object Login
 @Serializable
 object Contact
 @Serializable
 object Activity
+@Serializable
+object Register
