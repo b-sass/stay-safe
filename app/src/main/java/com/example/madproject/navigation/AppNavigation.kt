@@ -23,7 +23,8 @@ fun AppNavigation(ctx: Context) {
                 userID = args.userID,
                 ctx = ctx,
                 onContactsClicked = { navController.navigate(Contact(it)) },
-                onActivitiesClicked = { navController.navigate(Activity) }
+                onActivitiesClicked = { navController.navigate(Activity) },
+                onSettingsClicked = { navController.navigate(Settings) } // Updated here
             )
         }
         composable<Login> { LoginView(
@@ -39,13 +40,17 @@ fun AppNavigation(ctx: Context) {
             ContactView(args.userID)
         }
         composable <Activity> { ActivityView() }
+        composable<Settings> {
+            SettingsView(UserID = 0, navController = navController)
+        }
     }
 }
 
 @Serializable
-data class Map (
+data class Map(
     val userID: Int
 )
+
 @Serializable
 object Login
 @Serializable
@@ -56,3 +61,5 @@ data class Contact (
 object Activity
 @Serializable
 object Register
+@Serializable
+object Settings // Renamed from Settings to SettingsScreen
