@@ -1,23 +1,43 @@
 package com.example.madproject.view
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Edit
+import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material3.*
-import androidx.compose.runtime.Composable
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
-import com.example.madproject.viewModel.UserViewModel
+
+// Mock User Data
+data class User(
+    val userId: Int,
+    var firstName: String,
+    var lastName: String,
+    var userName: String,
+    var password: String
+)
 
 @Composable
-fun SettingsView(UserID: Int, navController: NavController, viewModel: UserViewModel = viewModel()) {
-    val user = viewModel.currentUser.value
+fun SettingsView(UserID: Int, navController: NavController) {
+    // Hardcoded user data
+    var user by remember { mutableStateOf(User(
+        userId = UserID,
+        firstName = "John",
+        lastName = "Doe",
+        userName = "john.doe@example.com",
+        password = "password123"
+    )) }
+
+    // State for showing the edit dialog
+    var showDialog by remember { mutableStateOf(false) }
 
     Column(
         modifier = Modifier
@@ -31,17 +51,68 @@ fun SettingsView(UserID: Int, navController: NavController, viewModel: UserViewM
             ),
             modifier = Modifier.padding(bottom = 16.dp)
         )
-        UserInfoRow(label = "First Name:", value = viewModel.getUser(UserID).toString())
-        UserInfoRow(label = "First Name:", value = user?.firstName ?: "N/A")
-        UserInfoRow(label = "Last Name:", value = user?.lastName ?: "N/A")
-        UserInfoRow(label = "Email:", value = user?.userName ?: "N/A")
-        UserInfoRow(label = "Password:", value = user?.password ?: "N/A")
+
+        UserInfoRow(label = "User  ID:", value = user.userId.toString())
+        UserInfoRow(label = "First Name:", value = user.firstName)
+        UserInfoRow(label = "Last Name:", value = user.lastName)
+        UserInfoRow(label = "Email:", value = user.userName)
+        UserInfoRow(label = "Password:", value = user.password)
+
+        // Edit Button
+        Button(
+            onClick = { showDialog = true },
+            modifier = Modifier.padding(top = 16.dp)
+        ) {
+            Text("Edit")
+        }
 
         // Back Button
         IconButton(onClick = { navController.popBackStack() }) {
             Icon(Icons.Default.Edit, contentDescription = "Back")
         }
+    }
 
+    // Edit User Dialog
+    if (showDialog) {
+        AlertDialog(
+            onDismissRequest = { showDialog = false },
+            title = { Text("Edit User Information") },
+            text = {
+                Column {
+                    TextField(
+                        value = user.firstName,
+                        onValueChange = { user = user.copy(firstName = it) },
+                        label = { Text("First Name") }
+                    )
+                    TextField(
+                        value = user.lastName,
+                        onValueChange = { user = user.copy(lastName = it) },
+                        label = { Text("Last Name") }
+                    )
+                    TextField(
+                        value = user.userName,
+                        onValueChange = { user = user.copy(userName = it) },
+                        label = { Text("Email") }
+                    )
+                    TextField(
+                        value = user.password,
+                        onValueChange = { user = user.copy(password = it) },
+                        label = { Text("Password") },
+                        visualTransformation = PasswordVisualTransformation()
+                    )
+                }
+            },
+            confirmButton = {
+                Button(onClick = { showDialog = false }) {
+                    Text("Save")
+                }
+            },
+            dismissButton = {
+                Button(onClick = { showDialog = false }) {
+                    Text("Cancel")
+                }
+            }
+        )
     }
 }
 

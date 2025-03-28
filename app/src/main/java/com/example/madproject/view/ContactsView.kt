@@ -74,22 +74,7 @@ fun ContactView(
         }
 
 
-//        if (isEditing && currentContact != null) {
-//            EditContactDialog(
-//                contact = currentContact!!,
-//                onDismiss = { isEditing = false },
-//                onUpdate = { updatedContact ->
-//                    val index = contacts.value?.indexOfFirst { it.id == updatedContact.id }
-//                    if (index != -1) {
-//                        contacts.value[0] = updatedContact
-//                        coroutineScope.launch {
-//                            snackbarHostState.showSnackbar("Contact updated: ${updatedContact.label}")
-//                        }
-//                    }
-//                    isEditing = false
-//                }
-//            )
-//        }
+//
 
 
         if (showAdd) {
@@ -134,9 +119,7 @@ fun ContactCard(
                 horizontalArrangement = Arrangement.End,
                 modifier = Modifier.fillMaxWidth()
             ) {
-//                IconButton(onClick = onEdit) {
-//                    Icon(Icons.Default.Edit, contentDescription = "Edit Contact")
-//                }
+
                 IconButton(onClick = onDelete) {
                     Icon(Icons.Default.Delete, contentDescription = "Delete Contact")
                 }
