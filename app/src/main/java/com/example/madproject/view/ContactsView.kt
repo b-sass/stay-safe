@@ -73,25 +73,6 @@ fun ContactView(
             Text("Add Contact")
         }
 
-
-//        if (isEditing && currentContact != null) {
-//            EditContactDialog(
-//                contact = currentContact!!,
-//                onDismiss = { isEditing = false },
-//                onUpdate = { updatedContact ->
-//                    val index = contacts.value?.indexOfFirst { it.id == updatedContact.id }
-//                    if (index != -1) {
-//                        contacts.value[0] = updatedContact
-//                        coroutineScope.launch {
-//                            snackbarHostState.showSnackbar("Contact updated: ${updatedContact.label}")
-//                        }
-//                    }
-//                    isEditing = false
-//                }
-//            )
-//        }
-
-
         if (showAdd) {
             AddContactButton(
                 userID = userID,
@@ -134,50 +115,12 @@ fun ContactCard(
                 horizontalArrangement = Arrangement.End,
                 modifier = Modifier.fillMaxWidth()
             ) {
-//                IconButton(onClick = onEdit) {
-//                    Icon(Icons.Default.Edit, contentDescription = "Edit Contact")
-//                }
                 IconButton(onClick = onDelete) {
                     Icon(Icons.Default.Delete, contentDescription = "Delete Contact")
                 }
             }
         }
     }
-}
-
-@Composable
-fun EditContactDialog(
-    contact: Contact,
-    onDismiss: () -> Unit,
-    onUpdate: (Contact) -> Unit
-) {
-    var name by remember { mutableStateOf(contact.label) }
-    var userId by remember { mutableStateOf(contact.userID) }
-    var contactId by remember { mutableStateOf(contact.contactID) }
-
-    AlertDialog(
-        onDismissRequest = onDismiss,
-        title = { Text("Edit Contact") },
-        text = {
-            Column {
-                TextField(value = name, onValueChange = { name = it }, label = { Text("Name") })
-//                TextField(value = userId, onValueChange = { userId = it }, label = { Text("User  ID") })
-//                TextField(value = contactId, onValueChange = { contactId = it }, label = { Text("Contact ID") })
-            }
-        },
-        confirmButton = {
-            Button(onClick = {
-                onUpdate(contact.copy(label = name, userID = userId, contactID = contactId))
-            }) {
-                Text("Update")
-            }
-        },
-        dismissButton = {
-            Button(onClick = onDismiss) {
-                Text("Cancel")
-            }
-        }
-    )
 }
 
 @Composable

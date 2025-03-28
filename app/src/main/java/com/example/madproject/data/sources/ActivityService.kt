@@ -8,6 +8,7 @@ import io.ktor.client.request.delete
 import io.ktor.client.request.get
 import io.ktor.client.request.post
 import io.ktor.client.request.put
+import io.ktor.client.statement.HttpResponse
 
 class ActivityService(
     private val client: HttpClient = KtorClient.client
@@ -22,7 +23,12 @@ class ActivityService(
     }
 
     suspend fun getUserActivities(id: Int): List<Activity> {
-        return client.get("activities/users/$id").body()
+        val response: HttpResponse = client.get("activities/users/$id")
+        // Check for status
+        if (response.status.value in 200..299) {
+            return response.body()
+        }
+        return emptyList()
     }
 
     suspend fun createActivity(activity: Activity) {

@@ -31,9 +31,9 @@ class ApiRepository (
     suspend fun deleteContact(id: Int) { contacts.deleteContact(id) }
 
     // Activity
-    suspend fun getActivities() { activities.getActivities() }
-    suspend fun getActivity(id: Int) { activities.getActivity(id) }
-    suspend fun getUserActivities(id: Int) { activities.getUserActivities(id) }
+    suspend fun getActivities(): List<Activity> { return activities.getActivities() }
+    suspend fun getActivity(id: Int): Activity { return activities.getActivity(id) }
+    suspend fun getUserActivities(id: Int): List<Activity> { return activities.getUserActivities(id) }
     suspend fun createActivity(activity: Activity) { activities.createActivity(activity) }
     suspend fun updateActivity(id: Int) { activities.updateActivity(id) }
     suspend fun deleteActivity(id: Int) { activities.deleteActivity(id) }
