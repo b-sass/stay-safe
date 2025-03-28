@@ -3,6 +3,7 @@ package com.example.madproject.viewModel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.madproject.data.models.Activity
+import com.example.madproject.data.models.Location
 import com.example.madproject.data.models.User
 import com.example.madproject.data.repositories.ApiRepository
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -19,6 +20,9 @@ class ActivityViewModel: ViewModel() {
     private val _user = MutableStateFlow<User?>(null)
     var user = _user.asStateFlow()
 
+    private val _coordinates = MutableStateFlow<Pair<Double, Double>?>(null)
+    var coordinates = _coordinates.asStateFlow()
+
     fun getUser() {
         viewModelScope.launch {
             _user.value = api.getUser(userID!!)
@@ -31,14 +35,43 @@ class ActivityViewModel: ViewModel() {
         }
     }
 
-    fun createActivity(activity: Activity) {
+    fun createActivity(name: String, description: String, startDate: String, endDate: String, start: Location, end: Location) {
+        var locations: List<Location>? = null
         viewModelScope.launch {
-            api.createActivity(activity)
+            api.createLocation(start)
         }.invokeOnCompletion {
-            // Refresh activities list
-            getActivities(userID!!)
+            viewModelScope.launch {
+                api.createLocation(end)
+        }.invokeOnCompletion {
+            viewModelScope.launch {
+                locations = api.getLocations()
+        }.invokeOnCompletion {
+            viewModelScope.launch {
+                val locEnd = locations!!.last()
+                val locStart = locations[locations.size - 2]
+
+                api.createActivity(
+                    Activity(
+                        name = name,
+                        description = description,
+                        userID = userID!!,
+                        startDate = startDate,
+                        endDate = endDate,
+                        endLocationID = locEnd.id!!,
+                        startLocationID = locStart.id!!,
+                        userName = _user.value?.userName!!,
+                        startName = locStart.name,
+                        endName = locEnd.name,
+                        statusID = 1,
+                        status = "Planned",
+                    )
+                )
+            }.invokeOnCompletion {
+                // Refresh activities list
+                getActivities(userID!!)
+            }
         }
-    }
+    }}}
 
     fun updateActivity(activity: Activity) {
         viewModelScope.launch {
@@ -56,5 +89,12 @@ class ActivityViewModel: ViewModel() {
             // Refresh activities list
             getActivities(userID!!)
         }
+    }
+
+    fun getLocation(address: String, postcode: String): Pair<Double,Double>? {
+        viewModelScope.launch {
+            _coordinates.value = api.getLocationCoordinates(address, postcode)
+        }
+        return _coordinates.value
     }
 }

@@ -63,6 +63,7 @@ fun ActivityCard(
 fun ActivityView(
     userID: Int,
     viewModel: ActivityViewModel = viewModel(),
+    onAddActivity: (userID: Int) -> Unit,
 ) {
     viewModel.userID = userID
     viewModel.getUser()
@@ -103,7 +104,7 @@ fun ActivityView(
         }
 
         Button(
-            onClick = { showAdd = true },
+            onClick = { onAddActivity(userID) },
             modifier = Modifier.align(Alignment.End)
         ) {
             Text("Add Activity")
@@ -129,18 +130,6 @@ fun ActivityView(
 //                }
 //            )
 //        }
-
-        if (showAdd) {
-            AddActivityDialog(
-                onDismiss = { showAdd = false },
-                onAdd = {
-                    coroutineScope.launch {
-                        snackbarHostState.showSnackbar("Activity added")
-                    }
-                    showAdd = false
-                }
-            )
-        }
 
         SnackbarHost(hostState = snackbarHostState)
     }
@@ -170,63 +159,6 @@ fun EditActivityDialog(
                 onUpdate(activity.copy(name = name, userID = userId, description = description))
             }) {
                 Text("Update")
-            }
-        },
-        dismissButton = {
-            Button(onClick = onDismiss) {
-                Text("Cancel")
-            }
-        }
-    )
-}
-@Composable
-fun AddActivityDialog(
-    viewModel: ActivityViewModel = viewModel(),
-    onDismiss: () -> Unit,
-    onAdd: () -> Unit
-) {
-    var name by remember { mutableStateOf("") }
-    var description by remember { mutableStateOf("") }
-    var startDate by remember { mutableStateOf("") }
-    var endDate by remember { mutableStateOf("") }
-    var userName by remember { mutableStateOf("") }
-    var startName by remember { mutableStateOf("") }
-    var endName by remember { mutableStateOf("") }
-    var status by remember { mutableStateOf("Planned") }
-
-    AlertDialog(
-        onDismissRequest = onDismiss,
-        title = { Text("Add Activity") },
-        text = {
-            Column {
-                TextField(value = name, onValueChange = { name = it }, label = { Text("Name") })
-                TextField(value = description, onValueChange = { description = it }, label = { Text("Description") })
-                TextField(value = startDate.toString(), onValueChange = { startDate = it }, label = { Text("Start Date") })
-                TextField(value = endDate.toString(), onValueChange = { endDate = it }, label = { Text("End Date") })
-                TextField(value = userName, onValueChange = { userName = it }, label = { Text("Username") })
-                TextField(value = startName, onValueChange = { startName = it }, label = { Text("Start Name") })
-                TextField(value = endName, onValueChange = { endName = it }, label = { Text("End Name") })
-                TextField(value = status, onValueChange = { status = it }, label = { Text("Status") })
-            }
-        },
-        confirmButton = {
-            Button(onClick = {
-                viewModel.createActivity(Activity(
-                    name = name,
-                    userID = viewModel.userID!!,
-                    description = description,
-                    startDate = LocalDateTime.now().atOffset(ZoneOffset.UTC).format(DateTimeFormatter.ISO_DATE_TIME),
-                    startLocationID = 0,
-                    endDate = LocalDateTime.now().atOffset(ZoneOffset.UTC).format(DateTimeFormatter.ISO_DATE_TIME),
-                    endLocationID = 0,
-                    userName = viewModel.user.value?.userName!!,
-                    startName = startName,
-                    endName = endName,
-                    status = status
-                ))
-                onAdd()
-            }) {
-                Text("Add")
             }
         },
         dismissButton = {

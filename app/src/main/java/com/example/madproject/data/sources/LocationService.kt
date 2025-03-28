@@ -2,12 +2,16 @@ package com.example.madproject.data.sources
 
 import com.example.madproject.data.KtorClient
 import com.example.madproject.data.models.Location
+import com.example.madproject.data.models.User
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
 import io.ktor.client.request.delete
 import io.ktor.client.request.get
 import io.ktor.client.request.post
 import io.ktor.client.request.put
+import io.ktor.client.request.setBody
+import io.ktor.http.ContentType
+import io.ktor.http.contentType
 
 class LocationService (
     private val client: HttpClient = KtorClient.client
@@ -18,11 +22,15 @@ class LocationService (
     }
 
     suspend fun getLocation(id: Int): Location {
-        return client.get("locations/$id").body()
+        val locations: List<Location> =  client.get("locations/$id").body()
+        return locations[0]
     }
 
-    suspend fun createLocation(user: Location) {
-        client.post("locations")
+    suspend fun createLocation(location: Location) {
+        client.post("locations") {
+            contentType(ContentType.Application.Json)
+            setBody(location)
+        }
     }
 
     suspend fun updateLocation(id: Int) {
