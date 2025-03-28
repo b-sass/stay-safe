@@ -24,7 +24,7 @@ fun AppNavigation(ctx: Context) {
                 ctx = ctx,
                 onContactsClicked = { navController.navigate(Contact(it)) },
                 onActivitiesClicked = { navController.navigate(Activity(it)) },
-                onSettingsClicked = { navController.navigate(Settings) } // Updated here
+                onSettingsClicked = { navController.navigate(Settings) }
             )
         }
         composable<Login> { LoginView(
@@ -80,4 +80,4 @@ data class AddActivity (
 @Serializable
 object Register
 @Serializable
-object Settings // Renamed from Settings to SettingsScreen
+object Settings

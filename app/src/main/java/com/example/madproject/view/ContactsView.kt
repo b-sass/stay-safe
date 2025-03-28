@@ -72,7 +72,6 @@ fun ContactView(
         ) {
             Text("Add Contact")
         }
-
         if (showAdd) {
             AddContactButton(
                 userID = userID,
