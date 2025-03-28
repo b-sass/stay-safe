@@ -1,8 +1,10 @@
 package com.example.madproject.data.repositories
 
 import com.example.madproject.data.models.Activity
+import com.example.madproject.data.models.Contact
 import com.example.madproject.data.models.Location
 import com.example.madproject.data.models.User
+import com.example.madproject.data.models.UserContact
 import com.example.madproject.data.sources.ActivityService
 import com.example.madproject.data.sources.ContactService
 import com.example.madproject.data.sources.LocationService
@@ -19,13 +21,13 @@ class ApiRepository (
     // User
     suspend fun getUsers(): List<User> { return users.getUsers() }
     suspend fun getUser(id: Int): User { return users.getUser(id) }
-    suspend fun getUserContacts(id: Int): List<User> { return users.getUserContacts(id) }
+    suspend fun getUserContacts(id: Int): List<UserContact> { return users.getUserContacts(id) }
     suspend fun createUser(user: User) { users.createUser(user) }
     suspend fun updateUser(id: Int, user: User) { users.updateUser(id, user) }
     suspend fun deleteUser(id: Int) { users.deleteUser(id) }
 
     // Contact
-    suspend fun createContact() { contacts.createContact() }
+    suspend fun createContact(contact: Contact) { contacts.createContact(contact) }
     suspend fun deleteContact(id: Int) { contacts.deleteContact(id) }
 
     // Activity

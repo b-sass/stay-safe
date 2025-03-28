@@ -22,29 +22,24 @@ fun AppNavigation(ctx: Context) {
             MapView(
                 userID = args.userID,
                 ctx = ctx,
-                onContactsClicked = { navController.navigate(Contact) },
+                onContactsClicked = { navController.navigate(Contact(it)) },
                 onActivitiesClicked = { navController.navigate(Activity) },
                 onSettingsClicked = { navController.navigate(Settings) } // Updated here
             )
         }
-        composable<Login> {
-            LoginView(
-                onLogin = { navController.navigate(Map(it)) },
-                onRegisterButtonClicked = { navController.navigate(Register) }
-            )
+        composable<Login> { LoginView(
+            onLogin = { navController.navigate(Map(it)) },
+            onRegisterButtonClicked = { navController.navigate(Register) }
+        ) }
+        composable<Register> { RegisterView(
+            ctx = ctx,
+            onDismissRequest = { navController.popBackStack() },
+        ) }
+        composable<Contact> { backStackEntry ->
+            val args = backStackEntry.toRoute<Contact>()
+            ContactView(args.userID)
         }
-        composable<Register> {
-            RegisterView(
-                ctx = ctx,
-                onDismissRequest = { navController.popBackStack() },
-            )
-        }
-        composable<Contact> {
-            ContactView()
-        }
-        composable<Activity> {
-            ActivityView()
-        }
+        composable <Activity> { ActivityView() }
         composable<Settings> {
             SettingsView(UserID = 0, navController = navController)
         }
@@ -59,7 +54,9 @@ data class Map(
 @Serializable
 object Login
 @Serializable
-object Contact
+data class Contact (
+    val userID: Int
+)
 @Serializable
 object Activity
 @Serializable
