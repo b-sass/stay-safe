@@ -11,13 +11,27 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
-import com.example.madproject.viewModel.UserViewModel
+
+// Mock User Data
+data class User(
+    val userId: Int,
+    val firstName: String,
+    val lastName: String,
+    val userName: String,
+    val password: String
+)
 
 @Composable
-fun SettingsView(UserID: Int, navController: NavController, viewModel: UserViewModel = viewModel()) {
-    val user = viewModel.currentUser.value
+fun SettingsView(UserID: Int, navController: NavController) {
+    // Hardcoded user data
+    val user = User(
+        userId = UserID,
+        firstName = "John",
+        lastName = "Doe",
+        userName = "john.doe@example.com",
+        password = "password123"
+    )
 
     Column(
         modifier = Modifier
@@ -31,17 +45,16 @@ fun SettingsView(UserID: Int, navController: NavController, viewModel: UserViewM
             ),
             modifier = Modifier.padding(bottom = 16.dp)
         )
-        UserInfoRow(label = "First Name:", value = viewModel.getUser(UserID).toString())
-        UserInfoRow(label = "First Name:", value = user?.firstName ?: "N/A")
-        UserInfoRow(label = "Last Name:", value = user?.lastName ?: "N/A")
-        UserInfoRow(label = "Email:", value = user?.userName ?: "N/A")
-        UserInfoRow(label = "Password:", value = user?.password ?: "N/A")
+        UserInfoRow(label = "User  ID:", value = user.userId.toString())
+        UserInfoRow(label = "First Name:", value = user.firstName)
+        UserInfoRow(label = "Last Name:", value = user.lastName)
+        UserInfoRow(label = "Email:", value = user.userName)
+        UserInfoRow(label = "Password:", value = user.password)
 
         // Back Button
         IconButton(onClick = { navController.popBackStack() }) {
             Icon(Icons.Default.Edit, contentDescription = "Back")
         }
-
     }
 }
 
