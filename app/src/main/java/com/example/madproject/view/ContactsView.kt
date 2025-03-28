@@ -26,6 +26,7 @@ fun ContactView(
     userID: Int,
     viewModel: ContactViewModel = viewModel()
 ) {
+    viewModel.userID = userID
     var contacts = viewModel.contacts.collectAsStateWithLifecycle()
 
     var isEditing by remember { mutableStateOf(false) }
@@ -51,7 +52,6 @@ fun ContactView(
                     contact = contact,
                     onDelete = {
                         viewModel.deleteContact(contact.contactID)
-                        viewModel.getContacts(userID)
                         coroutineScope.launch {
                             snackbarHostState.showSnackbar("Contact deleted: ${contact.label}")
                         }
@@ -201,7 +201,7 @@ fun AddContactButton(
         },
         confirmButton = {
             Button(onClick = {
-                viewModel.addContact(userID, name, label)
+                viewModel.addContact(name, label)
                 onAdd()
             }) {
                 Text("Add")
