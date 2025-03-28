@@ -24,27 +24,38 @@ fun AppNavigation(ctx: Context) {
                 ctx = ctx,
                 onContactsClicked = { navController.navigate(Contact) },
                 onActivitiesClicked = { navController.navigate(Activity) },
-                onSettingsClicked = { navController.navigate(Settings) }
+                onSettingsClicked = { navController.navigate(Settings) } // Updated here
             )
         }
-        composable<Login> { LoginView(
-            onLogin = { navController.navigate(Map(it)) },
-            onRegisterButtonClicked = { navController.navigate(Register) }
-        ) }
-        composable<Register> { RegisterView(
-            ctx = ctx,
-            onDismissRequest = { navController.popBackStack() },
-        ) }
-        composable<Contact> { ContactView() }
-        composable <Activity> { ActivityView() }
-        composable <Settings> { SettingsView(UserID = 1) }
+        composable<Login> {
+            LoginView(
+                onLogin = { navController.navigate(Map(it)) },
+                onRegisterButtonClicked = { navController.navigate(Register) }
+            )
+        }
+        composable<Register> {
+            RegisterView(
+                ctx = ctx,
+                onDismissRequest = { navController.popBackStack() },
+            )
+        }
+        composable<Contact> {
+            ContactView()
+        }
+        composable<Activity> {
+            ActivityView()
+        }
+        composable<Settings> {
+            SettingsView(UserID = 0, navController = navController)
+        }
     }
 }
 
 @Serializable
-data class Map (
+data class Map(
     val userID: Int
 )
+
 @Serializable
 object Login
 @Serializable
@@ -54,4 +65,4 @@ object Activity
 @Serializable
 object Register
 @Serializable
-object Settings
+object Settings // Renamed from Settings to SettingsScreen

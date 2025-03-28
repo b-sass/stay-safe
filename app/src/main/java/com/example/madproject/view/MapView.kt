@@ -104,11 +104,10 @@ fun MapView(
                     onClick = { onActivitiesClicked() },
                     selected = false
                 )
-                // Settings
                 NavigationBarItem(
-                    icon = { Icon(Icons.Filled.Person, contentDescription = "Settings") },
+                    icon = {Icon(Icons.Filled.Person, contentDescription = "Settings")},
                     label = {Text("Settings")},
-                    onClick = { onSettingsClicked()},
+                    onClick = { onSettingsClicked() },
                     selected = false
                 )
             }
