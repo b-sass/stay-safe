@@ -22,7 +22,7 @@ fun AppNavigation(ctx: Context) {
             MapView(
                 userID = args.userID,
                 ctx = ctx,
-                onContactsClicked = { navController.navigate(Contact) },
+                onContactsClicked = { navController.navigate(Contact(it)) },
                 onActivitiesClicked = { navController.navigate(Activity) }
             )
         }
@@ -34,7 +34,10 @@ fun AppNavigation(ctx: Context) {
             ctx = ctx,
             onDismissRequest = { navController.popBackStack() },
         ) }
-        composable<Contact> { ContactView() }
+        composable<Contact> { backStackEntry ->
+            val args = backStackEntry.toRoute<Contact>()
+            ContactView(args.userID)
+        }
         composable <Activity> { ActivityView() }
     }
 }
@@ -46,7 +49,9 @@ data class Map (
 @Serializable
 object Login
 @Serializable
-object Contact
+data class Contact (
+    val userID: Int
+)
 @Serializable
 object Activity
 @Serializable

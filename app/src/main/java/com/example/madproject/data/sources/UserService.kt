@@ -2,7 +2,9 @@ package com.example.madproject.data.sources
 
 import android.util.Log
 import com.example.madproject.data.KtorClient
+import com.example.madproject.data.models.Contact
 import com.example.madproject.data.models.User
+import com.example.madproject.data.models.UserContact
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
 import io.ktor.client.request.delete
@@ -26,7 +28,7 @@ class UserService(
         return users[0]
     }
 
-    suspend fun getUserContacts(id: Int): List<User> {
+    suspend fun getUserContacts(id: Int): List<UserContact> {
         return client.get("users/contacts/$id").body()
     }
 
