@@ -20,6 +20,6 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name = "Mad Project"
+rootProject.name = "Stay Safe"
 include(":app")
  
