@@ -8,7 +8,6 @@ import com.example.staysafe.data.models.UserContact
 import com.example.staysafe.data.sources.ActivityService
 import com.example.staysafe.data.sources.ContactService
 import com.example.staysafe.data.sources.LocationService
-import com.example.staysafe.data.sources.StatusService
 import com.example.staysafe.data.sources.UserService
 
 class ApiRepository (
@@ -16,7 +15,6 @@ class ApiRepository (
     private val contacts: ContactService = ContactService(),
     private val activities: ActivityService = ActivityService(),
     private val locations: LocationService = LocationService(),
-    private val status: StatusService = StatusService(),
 ) {
     // User
     suspend fun getUsers(): List<User> { return users.getUsers() }
@@ -44,8 +42,4 @@ class ApiRepository (
     suspend fun createLocation(location: Location) { locations.createLocation(location) }
     suspend fun updateLocation(id: Int) { locations.updateLocation(id) }
     suspend fun deleteLocation(id: Int) { locations.deleteLocation(id) }
-
-    // Status
-    suspend fun getStatus() { status.getStatus() }
-    suspend fun getStatus(id: Int) { status.getStatus(id) }
 }

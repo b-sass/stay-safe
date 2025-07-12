@@ -8,9 +8,7 @@ import java.time.format.DateTimeFormatter
 
 @Serializable
 data class Contact (
-    @SerialName("ContactID") val id: Int? = null,
-    @SerialName("ContactUserID") val userID: Int,
-    @SerialName("ContactContactID") val contactID: Int,
-    @SerialName("ContactLabel") var label: String,
-    @SerialName("ContactDatecreated") val dateCreated: String = LocalDateTime.now().atOffset(ZoneOffset.UTC).format(DateTimeFormatter.ISO_DATE_TIME)
+    @SerialName("user") val userID: Int,
+    @SerialName("contact") val contactID: Int,
+    var label: String
 )

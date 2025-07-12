@@ -125,7 +125,7 @@ fun RegisterView(
                             val newUser = User(
                                 firstName = firstName,
                                 lastName = lastName,
-                                userName = username,
+                                username = username,
                                 phone = phoneNumber,
                                 password = password,
                                 latitude = lat,

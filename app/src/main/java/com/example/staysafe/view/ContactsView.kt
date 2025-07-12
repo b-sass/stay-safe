@@ -110,7 +110,6 @@ fun ContactCard(
             Text(text = contact.label, style = MaterialTheme.typography.titleMedium)
             Text(text = "User  ID: ${contact.id}", style = MaterialTheme.typography.bodyMedium)
             Text(text = "Contact ID: ${contact.contactID}", style = MaterialTheme.typography.bodyMedium)
-            Text(text = "Date Created: ${contact.dateCreated}", style = MaterialTheme.typography.bodyMedium)
             Spacer(modifier = Modifier.height(8.dp))
 
             Row(

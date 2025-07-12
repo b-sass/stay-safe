@@ -34,8 +34,8 @@ fun LoginView(
 ) {
     viewModel.getUsers()
 
-    var username by remember { mutableStateOf("niceusername") }
-    var password by remember { mutableStateOf("password123") }
+    var username by remember { mutableStateOf("pookie") }
+    var password by remember { mutableStateOf("securepass") }
 
     val locationPermissions = rememberMultiplePermissionsState(
         listOf(

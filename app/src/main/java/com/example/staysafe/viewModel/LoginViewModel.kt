@@ -18,7 +18,7 @@ class LoginViewModel: ViewModel() {
         }
     }
 
-    fun getUserWithCredentials(userName: String, password: String) {
-        loggedInUser = users.find { it.userName == userName && it.password == password }
+    fun getUserWithCredentials(username: String, password: String) {
+        loggedInUser = users.find { it.username == username && it.password == password }
     }
 }

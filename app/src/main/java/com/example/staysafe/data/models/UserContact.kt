@@ -16,6 +16,5 @@ data class UserContact (
     @SerialName("UserTimestamp") val timestamp: Long,
     @SerialName("UserImageURL") val imageURL: String,
     @SerialName("UserContactID") val contactID: Int,
-    @SerialName("UserContactLabel") val label: String,
-    @SerialName("UserContactDatecreated") val dateCreated: String
+    @SerialName("UserContactLabel") val label: String
 )

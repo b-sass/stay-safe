@@ -14,7 +14,7 @@ import kotlinx.serialization.json.Json
 object KtorClient {
     val client = HttpClient(CIO) {
         install(DefaultRequest) {
-            url("https://softwarehub.uk/unibase/staysafe/v1/api/")
+            url("http://localhost:3000/")
         }
         install(ContentNegotiation) {
             json(Json {

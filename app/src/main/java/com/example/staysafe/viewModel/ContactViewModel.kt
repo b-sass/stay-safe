@@ -29,7 +29,7 @@ class ContactViewModel: ViewModel() {
         viewModelScope.launch {
             try {
                 val users: List<User> = api.getUsers()
-                users.find { it.userName == name }?.let {
+                users.find { it.username == name }?.let {
                     api.createContact(
                         Contact(
                             userID = userID!!,

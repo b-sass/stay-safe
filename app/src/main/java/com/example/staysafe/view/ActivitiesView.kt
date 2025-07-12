@@ -29,7 +29,6 @@ fun Activitydata(): List<Activity> {
             startLocationID = 1,
             endDate = Date(),
             endLocationID = 2,
-            userName = "User  One",
             startName = "Start Location 1",
             endName = "End Location 1",
             status = "Active"
@@ -43,7 +42,6 @@ fun Activitydata(): List<Activity> {
             startLocationID = 2,
             endDate = Date(),
             endLocationID = 3,
-            userName = "User  Two",
             startName = "Start Location 2",
             endName = "End Location 2",
             status = "Active"
@@ -244,7 +242,6 @@ fun AddActivityDialog(
                     startLocationID = startLocationID,
                     endDate = endDate,
                     endLocationID = endLocationID,
-                    userName = userName,
                     startName = startName,
                     endName = endName,
                     status = status
