@@ -42,16 +42,8 @@ fun AppNavigation(ctx: Context) {
         composable <Activity> { backStackEntry ->
             val args = backStackEntry.toRoute<Activity>()
             ActivityView(
-                userID = args.userID,
-                onAddActivity = { navController.navigate(AddActivity(it))}
+                userID = args.userID
             ) }
-        composable <AddActivity> { backStackEntry ->
-            val args = backStackEntry.toRoute<AddActivity>()
-            AddActivityView(
-                userID = args.userID,
-                onSubmit = { navController.popBackStack() }
-            )
-        }
         composable<Settings> {
             SettingsView(UserID = 0, navController = navController)
         }

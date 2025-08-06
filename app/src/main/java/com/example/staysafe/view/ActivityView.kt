@@ -4,6 +4,8 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 
 @Composable
-fun ActivitiesView() {
+fun ActivityView(
+    userID: Int
+) {
     Text("Activities View");
 }
