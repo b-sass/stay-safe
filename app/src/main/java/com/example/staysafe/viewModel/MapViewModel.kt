@@ -8,6 +8,7 @@ import android.util.Log
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.staysafe.data.models.Activity
 import com.example.staysafe.data.models.User
 import com.example.staysafe.data.repositories.ApiRepository
 import com.google.android.gms.location.CurrentLocationRequest
@@ -26,30 +27,21 @@ class MapViewModel(
     var currentUser = mutableStateOf<User?>(null)
     val api: ApiRepository = ApiRepository()
 
-    private val _currentLocation = MutableStateFlow<Location?>(null)
+    private val _currentLocation = MutableStateFlow<android.location.Location?>(null)
     var currentLocation = _currentLocation.asStateFlow()
 
     private val _userContacts = MutableStateFlow<List<User>>(emptyList())
     var userContacts = _userContacts.asStateFlow()
 
+    private val _contactActivities = MutableStateFlow<List<Activity>>(emptyList())
+    val contactActivities = _contactActivities.asStateFlow()
+
+    private val _contactLocation = MutableStateFlow<Location?>(null)
+    var contactLocation = _contactLocation.asStateFlow()
+
     fun getUser(userID: Int) {
         viewModelScope.launch {
             currentUser.value = api.getUser(userID)
-        }
-    }
-
-    fun getUserContacts(userID: Int) {
-//        viewModelScope.launch {
-//            _userContacts.value = api.getUserContacts(userID)
-//        }
-    }
-
-    fun updateLocation(lat: Double, lon: Double) {
-        currentUser.value!!.latitude = lat
-        currentUser.value!!.longitude = lon
-
-        viewModelScope.launch {
-            api.updateUser(currentUser.value?.id!!, currentUser.value!!)
         }
     }
 
@@ -67,8 +59,29 @@ class MapViewModel(
                         _currentLocation.value = loc
                         Log.d("MapViewModel", "Current Location: $loc")
                     }
-
             }
         }
     }
+
+    fun getContactActivities(userID: Int) {
+        viewModelScope.launch {
+            try {
+                val contacts = api.getUserContacts(userID)
+                val allActivities = mutableListOf<Activity>()
+
+                contacts.forEach { contact ->
+                    val contactID = contact.id ?: return@forEach
+                    val activities = api.getUserActivities(contactID)
+                    // Filter for activities with "Started" status
+                    val startedActivities = activities.filter { it.status == "Started" }
+                    allActivities.addAll(startedActivities)
+                }
+
+                _contactActivities.value = allActivities
+            } catch (e: Exception) {
+                Log.e("MapViewModel", "Error fetching contact activities: ${e.message}")
+            }
+        }
+    }
+
 }
