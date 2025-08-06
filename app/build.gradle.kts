@@ -23,11 +23,11 @@ secrets {
 }
 
 android {
-    namespace = "com.example.madproject"
+    namespace = "com.example.staysafe"
     compileSdk = 35
 
     defaultConfig {
-        applicationId = "com.example.madproject"
+        applicationId = "com.example.staysafe"
         minSdk = 26
         targetSdk = 35
         versionCode = 1
