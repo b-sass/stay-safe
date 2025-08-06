@@ -19,7 +19,10 @@ class ContactService (
         }
     }
 
-    suspend fun deleteContact(id: Int) {
-        client.delete("contacts/$id")
+    suspend fun deleteContact(userID: Int, contactID: Int) {
+        client.delete("contacts") {
+            contentType(ContentType.Application.Json)
+            setBody(mapOf("user" to userID, "contact" to contactID))
+        }
     }
 }

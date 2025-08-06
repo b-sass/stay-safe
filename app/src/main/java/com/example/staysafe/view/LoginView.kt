@@ -21,6 +21,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.staysafe.dialogs.MessageDialog
 import com.example.staysafe.viewModel.LoginViewModel
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.rememberMultiplePermissionsState
@@ -32,10 +33,18 @@ fun LoginView(
     onLogin: (userID: Int) -> Unit,
     onRegisterButtonClicked: () -> Unit,
 ) {
-    viewModel.getUsers()
+    var dialogVisible by remember { mutableStateOf(false) }
+    var dialogMessage by remember { mutableStateOf("") }
 
     var username by remember { mutableStateOf("pookie") }
     var password by remember { mutableStateOf("securepass") }
+
+    if (dialogVisible) {
+        MessageDialog(
+            onDismissRequest = { dialogVisible = false },
+            message = dialogMessage,
+        )
+    }
 
     val locationPermissions = rememberMultiplePermissionsState(
         listOf(
@@ -78,8 +87,9 @@ fun LoginView(
                     try {
                         viewModel.getUserWithCredentials(username, password)
                         onLogin(viewModel.loggedInUser?.id!!)
-                    } catch (e: NullPointerException) {
-                        Log.d("LoginView", "Can't find user\nusername: ${viewModel.loggedInUser}")
+                    } catch (e: Exception) {
+                        dialogVisible = true
+                        dialogMessage = "Can't find user: $username"
                     }
                 } ) { Text("Login") }
                 Spacer(modifier = Modifier.height(4.dp))

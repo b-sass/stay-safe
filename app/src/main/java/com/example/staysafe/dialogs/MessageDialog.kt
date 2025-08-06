@@ -30,7 +30,7 @@ fun MessageDialog(
             Column(
             ) {
                 Text(
-                    text = "User registered!",
+                    text = "Alert!",
                     modifier = Modifier
                         .padding(horizontal = 24.dp)
                         .padding(top = 24.dp)

@@ -23,10 +23,20 @@ class UserService(
     }
 
     suspend fun getUser(id: Int): User {
-
         val user: User =  client.get("users/$id").body()
-
         return user
+    }
+
+    suspend fun loginUser(username: String, password: String): User? {
+        return try {
+            client.post("users/login") {
+                contentType(ContentType.Application.Json)
+                setBody(mapOf("username" to username, "password" to password))
+            }.body<User>()
+        } catch (e: Exception) {
+            Log.e("UserService", "Login failed: ${e.message}")
+            null
+        }
     }
 
     suspend fun getUserContacts(id: Int): List<UserContact> {

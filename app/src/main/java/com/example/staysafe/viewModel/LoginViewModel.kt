@@ -12,13 +12,9 @@ class LoginViewModel: ViewModel() {
     var users: List<User> = mutableStateListOf<User>()
     var loggedInUser: User? = null
 
-    fun getUsers() {
-        viewModelScope.launch {
-            users = api.getUsers()
-        }
-    }
-
     fun getUserWithCredentials(username: String, password: String) {
-        loggedInUser = users.find { it.username == username && it.password == password }
+        viewModelScope.launch {
+            loggedInUser = api.loginUser(username, password)
+        }
     }
 }

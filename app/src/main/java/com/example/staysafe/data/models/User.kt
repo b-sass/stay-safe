@@ -14,5 +14,5 @@ data class User (
     var password: String,
     var latitude: Double? = null,
     var longitude: Double? = null,
-    @SerialName("UserImageURL") var image: String = "https://i.imgur.com/2aMsdby.png",
+//    @SerialName("UserImageURL") var image: String = "https://i.imgur.com/2aMsdby.png",
 )

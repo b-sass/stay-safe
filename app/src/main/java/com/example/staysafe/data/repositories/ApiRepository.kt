@@ -22,11 +22,12 @@ class ApiRepository (
     suspend fun getUserContacts(id: Int): List<UserContact> { return users.getUserContacts(id) }
     suspend fun createUser(user: User) { users.createUser(user) }
     suspend fun updateUser(id: Int, user: User) { users.updateUser(id, user) }
+    suspend fun loginUser(username: String, password: String): User? { return users.loginUser(username, password) }
     suspend fun deleteUser(id: Int) { users.deleteUser(id) }
 
     // Contact
     suspend fun createContact(contact: Contact) { contacts.createContact(contact) }
-    suspend fun deleteContact(id: Int) { contacts.deleteContact(id) }
+    suspend fun deleteContact(userID: Int, contactID: Int) { contacts.deleteContact(userID, contactID) }
 
     // Activity
     suspend fun getActivities() { activities.getActivities() }

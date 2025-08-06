@@ -49,7 +49,7 @@ fun ContactView(
                 ContactCard(
                     contact = contact,
                     onDelete = {
-                        viewModel.deleteContact(contact.contactID)
+                        viewModel.deleteContact(userID, contact.id!!)
                         coroutineScope.launch {
                             snackbarHostState.showSnackbar("Contact deleted: ${contact.label}")
                         }
@@ -108,8 +108,8 @@ fun ContactCard(
     ) {
         Column(modifier = Modifier.padding(16.dp)) {
             Text(text = contact.label, style = MaterialTheme.typography.titleMedium)
-            Text(text = "User  ID: ${contact.id}", style = MaterialTheme.typography.bodyMedium)
-            Text(text = "Contact ID: ${contact.contactID}", style = MaterialTheme.typography.bodyMedium)
+//            Text(text = "User  ID: ${contact.id}", style = MaterialTheme.typography.bodyMedium)
+            Text(text = "Contact ID: ${contact.id!!}", style = MaterialTheme.typography.bodyMedium)
             Spacer(modifier = Modifier.height(8.dp))
 
             Row(

@@ -47,9 +47,9 @@ class ContactViewModel: ViewModel() {
         }
     }
 
-    fun deleteContact(contactID: Int) {
+    fun deleteContact(user: Int, contactID: Int) {
         viewModelScope.launch {
-            api.deleteContact(contactID)
+            api.deleteContact(user, contactID)
         }.invokeOnCompletion {
             // Refresh contacts list
             getContacts(userID!!)

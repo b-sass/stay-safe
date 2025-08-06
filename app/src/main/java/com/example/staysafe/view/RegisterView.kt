@@ -117,9 +117,6 @@ fun RegisterView(
 
             Button(
                 onClick = {
-                    var lat = 0.0
-                    var lon = 0.0
-
                     if (ctx.checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
                         locationProvider.lastLocation.addOnSuccessListener { location: Location? ->
                             val newUser = User(
@@ -128,8 +125,8 @@ fun RegisterView(
                                 username = username,
                                 phone = phoneNumber,
                                 password = password,
-                                latitude = lat,
-                                longitude = lon
+                                latitude = null,
+                                longitude = null
                             )
 
                             scope.launch {
