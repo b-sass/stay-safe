@@ -1,19 +1,32 @@
-package com.example.staysafe.view // Change this to your actual package name
+package com.example.staysafe.view
 
+import android.Manifest
 import android.content.Context
 import android.location.Location
 import android.util.Log
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.outlined.DirectionsRun
 import androidx.compose.material.icons.automirrored.outlined.DirectionsWalk
 import androidx.compose.material.icons.filled.LocationOn
 import androidx.compose.material.icons.filled.Person
+import androidx.compose.material.icons.outlined.DirectionsRun
+import androidx.compose.material.icons.outlined.Flag
 import androidx.compose.material.icons.outlined.Person
+import androidx.compose.material.icons.outlined.Settings
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.staysafe.R
+import com.example.staysafe.dialogs.ActivityDialog
 import com.google.android.gms.maps.model.CameraPosition
 import com.google.android.gms.maps.model.LatLng
 import com.google.maps.android.compose.GoogleMap
@@ -35,19 +48,18 @@ fun MapView(
     userID: Int,
     viewModel: MapViewModel = viewModel(),
     ctx: Context,
-    onActivitiesClicked: (userID: Int) -> Unit,
+    onPlacesClicked: (userID: Int) -> Unit,
     onContactsClicked: (userID: Int) -> Unit,
     onSettingsClicked: (userID: Int) -> Unit
 ) {
     val scope = rememberCoroutineScope()
     val locationPermissions = rememberMultiplePermissionsState(
         listOf(
-            android.Manifest.permission.ACCESS_FINE_LOCATION,
-            android.Manifest.permission.ACCESS_COARSE_LOCATION
+            Manifest.permission.ACCESS_FINE_LOCATION,
+            Manifest.permission.ACCESS_COARSE_LOCATION
         )
     )
-    var showBottomSheet by remember { mutableStateOf(false) }
-    val sheetState = rememberModalBottomSheetState()
+    var showActivities by remember { mutableStateOf(false) }
 
     val currentLocation by viewModel.currentLocation.collectAsStateWithLifecycle()
 
@@ -81,16 +93,15 @@ fun MapView(
 
     Log.d("MapView", "User: ${currentUser.value}")
 
+    val scaffoldState = rememberBottomSheetScaffoldState()
+
+    if (showActivities) {
+        ActivityDialog(onDismissRequest = { showActivities = false })
+    }
+
     Scaffold(
         bottomBar = {
             NavigationBar() {
-                // Contacts
-                NavigationBarItem(
-                    icon = { Icon(Icons.Outlined.Person, contentDescription = "Contacts") },
-                    label = { Text("Contacts") },
-                    onClick = { onContactsClicked(userID) },
-                    selected = false
-                )
                 // Map
                 NavigationBarItem(
                     icon = { Icon(Icons.Filled.LocationOn, contentDescription = "Map") },
@@ -98,40 +109,46 @@ fun MapView(
                     onClick = { /* Handle Home click */ },
                     selected = true
                 )
-                // Activities
+                // Contacts
                 NavigationBarItem(
-                    icon = {
-                        Icon(
-                            Icons.AutoMirrored.Outlined.DirectionsWalk,
-                            contentDescription = "Activities"
-                        )
-                    },
-                    label = { Text("Activities") },
-                    onClick = { onActivitiesClicked(userID) },
+                    icon = { Icon(Icons.Outlined.Person, contentDescription = "Contacts") },
+                    label = { Text("Contacts") },
+                    onClick = { onContactsClicked(userID) },
+                    selected = false
+                )
+                // Places
+                NavigationBarItem(
+                    icon = { Icon(Icons.Outlined.Flag, contentDescription = "Places") },
+                    label = { Text("Places") },
+                    onClick = { onPlacesClicked(userID) },
                     selected = false
                 )
                 NavigationBarItem(
-                    icon = { Icon(Icons.Filled.Person, contentDescription = "Settings") },
+                    icon = { Icon(Icons.Outlined.Settings, contentDescription = "Settings") },
                     label = { Text("Settings") },
                     onClick = { onSettingsClicked(userID) },
                     selected = false
                 )
             }
+        },
+        floatingActionButton = {
+            FloatingActionButton(
+                onClick = { showActivities = true },
+
+                ) {
+                Icon(Icons.AutoMirrored.Outlined.DirectionsRun, contentDescription = "Activities")
+            }
         }
     ) { innerPadding ->
-        Box(
-            modifier = Modifier.padding(innerPadding)
-        ) {
-            // Map View
-            GoogleMap(
-                modifier = Modifier.fillMaxSize(),
-                cameraPositionState = cameraPositionState,
-                mapColorScheme = ComposeMapColorScheme.FOLLOW_SYSTEM,
-                uiSettings = MapUiSettings(
-                    zoomControlsEnabled = false,
-                ),
-                properties = MapProperties(isMyLocationEnabled = true)
-            )
-        }
+        // Map View
+        GoogleMap(
+            modifier = Modifier.fillMaxSize(),
+            cameraPositionState = cameraPositionState,
+            mapColorScheme = ComposeMapColorScheme.FOLLOW_SYSTEM,
+            uiSettings = MapUiSettings(
+                zoomControlsEnabled = false,
+            ),
+            properties = MapProperties(isMyLocationEnabled = true)
+        )
     }
 }

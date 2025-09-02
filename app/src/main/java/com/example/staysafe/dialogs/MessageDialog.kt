@@ -12,14 +12,17 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MessageDialog(
-    message: String,
+    message: String? = null,
+    header: String = "Alert!",
     onDismissRequest: () -> Unit = {},
+    content: @Composable () -> Unit = {},
 ) {
     BasicAlertDialog(
         onDismissRequest = onDismissRequest,
@@ -28,20 +31,26 @@ fun MessageDialog(
             shape = MaterialTheme.shapes.large,
         ) {
             Column(
+
             ) {
                 Text(
-                    text = "Alert!",
+                    text = header,
                     modifier = Modifier
                         .padding(horizontal = 24.dp)
                         .padding(top = 24.dp)
                         .padding(bottom = 16.dp),
                 )
 
-                Text(
-                    text = message,
-                    modifier = Modifier
-                        .padding(horizontal = 24.dp)
-                )
+                Column(
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.Center,
+                    modifier = Modifier.padding(horizontal = 24.dp)
+                ) {
+                    if (message != null) { Text(message) }
+                    else {
+                        content()
+                    }
+                }
 
                 Row(
                     modifier = Modifier

@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">Stay Safe</string>
+    <string name="placeholder_description">Placeholder Image</string>
 </resources>
