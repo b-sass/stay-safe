@@ -1,19 +1,32 @@
-package com.example.staysafe.view // Change this to your actual package name
+package com.example.staysafe.view
 
+import android.Manifest
 import android.content.Context
 import android.location.Location
 import android.util.Log
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.outlined.DirectionsRun
 import androidx.compose.material.icons.automirrored.outlined.DirectionsWalk
 import androidx.compose.material.icons.filled.LocationOn
 import androidx.compose.material.icons.filled.Person
+import androidx.compose.material.icons.outlined.DirectionsRun
+import androidx.compose.material.icons.outlined.Flag
 import androidx.compose.material.icons.outlined.Person
+import androidx.compose.material.icons.outlined.Settings
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.staysafe.R
+import com.example.staysafe.dialogs.ActivityDialog
 import com.google.android.gms.maps.model.CameraPosition
 import com.google.android.gms.maps.model.LatLng
 import com.google.maps.android.compose.GoogleMap
@@ -35,19 +48,18 @@ fun MapView(
     userID: Int,
     viewModel: MapViewModel = viewModel(),
     ctx: Context,
-    onActivitiesClicked: (userID: Int) -> Unit,
+    onPlacesClicked: (userID: Int) -> Unit,
     onContactsClicked: (userID: Int) -> Unit,
     onSettingsClicked: (userID: Int) -> Unit
 ) {
     val scope = rememberCoroutineScope()
     val locationPermissions = rememberMultiplePermissionsState(
         listOf(
-            android.Manifest.permission.ACCESS_FINE_LOCATION,
-            android.Manifest.permission.ACCESS_COARSE_LOCATION
+            Manifest.permission.ACCESS_FINE_LOCATION,
+            Manifest.permission.ACCESS_COARSE_LOCATION
         )
     )
-    var showBottomSheet by remember { mutableStateOf(false) }
-    val sheetState = rememberModalBottomSheetState()
+    var showActivities by remember { mutableStateOf(false) }
 
     val currentLocation by viewModel.currentLocation.collectAsStateWithLifecycle()
 
@@ -60,19 +72,16 @@ fun MapView(
     val contactActivities by viewModel.contactActivities.collectAsStateWithLifecycle()
 
     LaunchedEffect(userID) {
-        viewModel.getUserContacts(userID)
         viewModel.getContactActivities(userID)
     }
 
     Log.d("MapView", "ViewModel Location: $currentLocation")
 
     viewModel.getUser(userID)
-    viewModel.getUserContacts(userID)
 
     Log.d("MapView", "Starting Location: $location")
 
     val currentUser = viewModel.currentUser
-    val userContacts by viewModel.userContacts.collectAsStateWithLifecycle()
 
     // Set the initial camera position
     val cameraPositionState = rememberCameraPositionState {
@@ -84,16 +93,15 @@ fun MapView(
 
     Log.d("MapView", "User: ${currentUser.value}")
 
+    val scaffoldState = rememberBottomSheetScaffoldState()
+
+    if (showActivities) {
+        ActivityDialog(onDismissRequest = { showActivities = false })
+    }
+
     Scaffold(
         bottomBar = {
             NavigationBar() {
-                // Contacts
-                NavigationBarItem(
-                    icon = { Icon(Icons.Outlined.Person, contentDescription = "Contacts") },
-                    label = { Text("Contacts") },
-                    onClick = { onContactsClicked(userID) },
-                    selected = false
-                )
                 // Map
                 NavigationBarItem(
                     icon = { Icon(Icons.Filled.LocationOn, contentDescription = "Map") },
@@ -101,167 +109,46 @@ fun MapView(
                     onClick = { /* Handle Home click */ },
                     selected = true
                 )
-                // Activities
+                // Contacts
                 NavigationBarItem(
-                    icon = {
-                        Icon(
-                            Icons.AutoMirrored.Outlined.DirectionsWalk,
-                            contentDescription = "Activities"
-                        )
-                    },
-                    label = { Text("Activities") },
-                    onClick = { onActivitiesClicked(userID) },
+                    icon = { Icon(Icons.Outlined.Person, contentDescription = "Contacts") },
+                    label = { Text("Contacts") },
+                    onClick = { onContactsClicked(userID) },
+                    selected = false
+                )
+                // Places
+                NavigationBarItem(
+                    icon = { Icon(Icons.Outlined.Flag, contentDescription = "Places") },
+                    label = { Text("Places") },
+                    onClick = { onPlacesClicked(userID) },
                     selected = false
                 )
                 NavigationBarItem(
-                    icon = { Icon(Icons.Filled.Person, contentDescription = "Settings") },
+                    icon = { Icon(Icons.Outlined.Settings, contentDescription = "Settings") },
                     label = { Text("Settings") },
                     onClick = { onSettingsClicked(userID) },
                     selected = false
                 )
             }
+        },
+        floatingActionButton = {
+            FloatingActionButton(
+                onClick = { showActivities = true },
+
+                ) {
+                Icon(Icons.AutoMirrored.Outlined.DirectionsRun, contentDescription = "Activities")
+            }
         }
     ) { innerPadding ->
-        Box(
-            modifier = Modifier.padding(innerPadding)
-        ) {
-            // Map View
-            GoogleMap(
-                modifier = Modifier.fillMaxSize(),
-                cameraPositionState = cameraPositionState,
-                mapColorScheme = ComposeMapColorScheme.FOLLOW_SYSTEM,
-                uiSettings = MapUiSettings(
-                    zoomControlsEnabled = false,
-                ),
-                properties = MapProperties(isMyLocationEnabled = true)
-            ) {
-                // Plot started activities from contacts
-                contactActivities.forEach { activity ->
-                    // Get coordinates from Activities API
-                    val startLocationId = activity.startLocationID
-                    val startLocationData =
-                        remember { mutableStateOf<com.example.madproject.data.models.Location?>(null) }
-
-                    // Get end location data
-                    val endLocationId = activity.endLocationID
-                    val endLocationData =
-                        remember { mutableStateOf<com.example.madproject.data.models.Location?>(null) }
-
-                    val routePoints = remember { mutableStateOf(emptyList<LatLng>()) }
-
-                    LaunchedEffect(activity.id) {
-                        val startLoc = viewModel.fetchLocation(activity.startLocationID)
-                        val endLoc = viewModel.fetchLocation(activity.endLocationID)
-
-                        // Update your marker states
-                        startLocationData.value = startLoc
-                        endLocationData.value = endLoc
-
-                        val startCoord =
-                            startLocationData.value?.let { LatLng(it.latitude, it.longitude) }
-                        val endCoord =
-                            endLocationData.value?.let { LatLng(it.latitude, it.longitude) }
-
-                        if (startCoord != null && endCoord != null) {
-                            viewModel.getRouteMatrix(startCoord, endCoord) { result ->
-                                result.onSuccess { matrix ->
-                                    routePoints.value = matrix.polyline?.let {
-                                        decodePolyline(it)
-                                    } ?: emptyList()
-                                }
-                                result.onFailure {
-                                    Log.e("MapView", "Failed to get route: ${it.message}")
-                                    routePoints.value = emptyList()
-                                }
-                            }
-                        }
-                    }
-
-                    // If we have location data, add marker
-                    startLocationData.value?.let { location ->
-                        Marker(
-                            state = MarkerState(
-                                position = LatLng(
-                                    location.latitude,
-                                    location.longitude
-                                )
-                            ),
-                            title = "${activity.userName}'s Activity: ${activity.name}",
-                            snippet = "Start: ${activity.status}"
-                        )
-                    }
-
-                    endLocationData.value?.let { location ->
-                        Marker(
-                            state = MarkerState(
-                                position = LatLng(
-                                    location.latitude,
-                                    location.longitude
-                                )
-                            ),
-                            title = "${activity.userName}'s Activity: ${activity.name}",
-                            snippet = "END: ${activity.endName}"
-                        )
-                    }
-                }
-            }
-            if (contactActivities.isNotEmpty()) {
-                Card(
-                    modifier = Modifier
-                        .align(Alignment.TopCenter)
-                        .padding(16.dp)
-                        .fillMaxWidth()
-                ) {
-                    Column(modifier = Modifier.padding(16.dp)) {
-                        Text(
-                            "Contact Activities",
-                            style = MaterialTheme.typography.titleMedium
-                        )
-                        contactActivities.take(3).forEach { activity ->
-                            Text(
-                                "${activity.userName}: ${activity.name}",
-                                style = MaterialTheme.typography.bodyMedium
-                            )
-                        }
-                    }
-                }
-            }
-        }
+        // Map View
+        GoogleMap(
+            modifier = Modifier.fillMaxSize(),
+            cameraPositionState = cameraPositionState,
+            mapColorScheme = ComposeMapColorScheme.FOLLOW_SYSTEM,
+            uiSettings = MapUiSettings(
+                zoomControlsEnabled = false,
+            ),
+            properties = MapProperties(isMyLocationEnabled = true)
+        )
     }
-}
-
-private fun decodePolyline(encoded: String): List<LatLng> {
-    val poly = mutableListOf<LatLng>()
-    var index = 0
-    var lat = 0
-    var lng = 0
-    val len = encoded.length
-
-    while (index < len) {
-        // Decode latitude
-        var b: Int
-        var shift = 0
-        var result = 0
-        do {
-            b = encoded[index++].toInt() - 63
-            result = result or ((b and 0x1f) shl shift)
-            shift += 5
-        } while (b >= 0x20)
-        val dlat = if ((result and 1) != 0) (result shr 1).inv() else (result shr 1)
-        lat += dlat
-
-        // Decode longitude
-        shift = 0
-        result = 0
-        do {
-            b = encoded[index++].toInt() - 63
-            result = result or ((b and 0x1f) shl shift)
-            shift += 5
-        } while (b >= 0x20)
-        val dlng = if ((result and 1) != 0) (result shr 1).inv() else (result shr 1)
-        lng += dlng
-
-        poly.add(LatLng(lat.toDouble() / 1E5, lng.toDouble() / 1E5))
-    }
-    return poly
 }

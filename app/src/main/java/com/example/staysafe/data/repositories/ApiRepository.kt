@@ -11,36 +11,36 @@ import com.example.staysafe.data.sources.LocationService
 import com.example.staysafe.data.sources.UserService
 
 class ApiRepository (
-    private val users: UserService = UserService(),
-    private val contacts: ContactService = ContactService(),
-    private val activities: ActivityService = ActivityService(),
-    private val locations: LocationService = LocationService(),
+    private val userAPI: UserService = UserService(),
+    private val contactAPI: ContactService = ContactService(),
+    private val activityAPI: ActivityService = ActivityService(),
+    private val locationAPI: LocationService = LocationService(),
 ) {
     // User
-    suspend fun getUsers(): List<User> { return users.getUsers() }
-    suspend fun getUser(id: Int): User { return users.getUser(id) }
-    suspend fun getUserContacts(id: Int): List<UserContact> { return users.getUserContacts(id) }
-    suspend fun createUser(user: User) { users.createUser(user) }
-    suspend fun updateUser(id: Int, user: User) { users.updateUser(id, user) }
-    suspend fun loginUser(username: String, password: String): User? { return users.loginUser(username, password) }
-    suspend fun deleteUser(id: Int) { users.deleteUser(id) }
+    suspend fun getUsers(): List<User> { return userAPI.getUsers() }
+    suspend fun getUser(id: Int): User { return userAPI.getUser(id) }
+    suspend fun getUserContacts(id: Int): List<UserContact> { return userAPI.getUserContacts(id) }
+    suspend fun createUser(user: User) { userAPI.createUser(user) }
+    suspend fun updateUser(id: Int, user: User) { userAPI.updateUser(id, user) }
+    suspend fun loginUser(username: String, password: String): User? { return userAPI.loginUser(username, password) }
+    suspend fun deleteUser(id: Int) { userAPI.deleteUser(id) }
 
     // Contact
-    suspend fun createContact(contact: Contact) { contacts.createContact(contact) }
-    suspend fun deleteContact(userID: Int, contactID: Int) { contacts.deleteContact(userID, contactID) }
+    suspend fun createContact(contact: Contact) { contactAPI.createContact(contact) }
+    suspend fun deleteContact(userID: Int, contactID: Int) { contactAPI.deleteContact(userID, contactID) }
 
     // Activity
-    suspend fun getActivities(): List<Activity> { return activities.getActivities() }
-    suspend fun getActivity(id: Int): Activity { return activities.getActivity(id) }
-    suspend fun getUserActivities(id: Int): List<Activity> { return activities.getUserActivities(id) }
-    suspend fun createActivity(activity: Activity) { activities.createActivity(activity) }
-    suspend fun updateActivity(id: Int) { activities.updateActivity(id) }
-    suspend fun deleteActivity(id: Int) { activities.deleteActivity(id) }
+    suspend fun getActivities(): List<Activity> { return activityAPI.getActivities() }
+    suspend fun getActivity(id: Int): Activity { return activityAPI.getActivity(id) }
+    suspend fun getUserActivities(id: Int): List<Activity> { return activityAPI.getUserActivities(id) }
+    suspend fun createActivity(activity: Activity) { activityAPI.createActivity(activity) }
+    suspend fun updateActivity(id: Int) { activityAPI.updateActivity(id) }
+    suspend fun deleteActivity(id: Int) { activityAPI.deleteActivity(id) }
 
     // Location
-    suspend fun getLocations(): List<Location> { return locations.getLocations() }
-    suspend fun getLocation(id: Int): Location { return locations.getLocation(id) }
-    suspend fun createLocation(location: Location) { locations.createLocation(location) }
-    suspend fun updateLocation(id: Int) { locations.updateLocation(id) }
-    suspend fun deleteLocation(id: Int) { locations.deleteLocation(id) }
+    suspend fun getLocations(): List<Location> { return locationAPI.getLocations() }
+    suspend fun getLocation(id: Int): Location { return locationAPI.getLocation(id) }
+    suspend fun createLocation(location: Location) { locationAPI.createLocation(location) }
+    suspend fun updateLocation(id: Int) { locationAPI.updateLocation(id) }
+    suspend fun deleteLocation(id: Int) { locationAPI.deleteLocation(id) }
 }
