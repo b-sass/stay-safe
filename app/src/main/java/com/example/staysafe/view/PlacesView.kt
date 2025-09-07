@@ -3,6 +3,7 @@ package com.example.staysafe.view
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
@@ -11,6 +12,8 @@ import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.Card
+import androidx.compose.material3.Divider
+import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.HorizontalDivider
@@ -25,8 +28,12 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.font.FontStyle
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.dp
 import com.example.staysafe.data.models.Location
 import com.example.staysafe.dialogs.AddPlaceDialog
+import org.intellij.lang.annotations.JdkConstants
 
 val place1 = Location(1, "Home", 52.24774, 21.01468)
 val place2 = Location(2, "Uni", 52.24020, 21.01843)
@@ -91,14 +98,29 @@ fun Places() {
         return
     }
 
-    for (place in places) {
-        Row(
-            horizontalArrangement = Arrangement.Start
+    LazyColumn(
+        modifier = Modifier.padding(8.dp)
+    ) {
+        items(places!!.size) { place ->
+            PlaceCard(places!![place])
+        }
+    }
+}
+
+@Composable
+fun PlaceCard(place: Location) {
+    ElevatedCard(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(bottom = 8.dp),
+    ) {
+        Column(
+            modifier = Modifier.padding(8.dp),
+            verticalArrangement = Arrangement.spacedBy(4.dp)
         ) {
-            Column() {
-                Text(place.name)
-                Text("${place.latitude}, ${place.longitude}")
-            }
+            Text(text = place.name, fontWeight = FontWeight.Bold)
+
+            Text(text = "${place.latitude}, ${place.longitude}", fontWeight = FontWeight.Thin,  fontStyle = FontStyle.Italic)
         }
     }
 }
