@@ -4,10 +4,23 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import com.example.staysafe.data.models.Location
 
@@ -18,9 +31,35 @@ val place4 = Location(4, "Work", 52.24313, 21.01661)
 
 var places: List<Location>? = listOf(place1, place2, place3, place4)
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun PlacesView() {
-    Scaffold { innerPadding ->
+
+    var showAddPlaceDialog by remember { mutableStateOf(false) }
+
+    if (showAddPlaceDialog) {
+        throw NotImplementedError("Add Place Dialog not implemented yet")
+    }
+
+    Scaffold(
+        topBar = {
+            TopAppBar(
+                title = { Text("Saved Places") },
+                navigationIcon = {
+                    IconButton(
+                        onClick = {}
+                    ) { Icon(Icons.AutoMirrored.Filled.ArrowBack, "Back") }
+                }
+            )
+        },
+        floatingActionButton = {
+            FloatingActionButton(
+                onClick = { showAddPlaceDialog = true }
+            ) {
+                Icon(Icons.Filled.Add, contentDescription = "Add place")
+            }
+        }
+    ) { innerPadding ->
         Column(
             modifier = Modifier.padding(innerPadding)
         ) {
