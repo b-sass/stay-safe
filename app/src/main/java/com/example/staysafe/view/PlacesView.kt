@@ -4,10 +4,13 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material3.Card
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.HorizontalDivider
@@ -23,6 +26,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import com.example.staysafe.data.models.Location
+import com.example.staysafe.dialogs.AddPlaceDialog
 
 val place1 = Location(1, "Home", 52.24774, 21.01468)
 val place2 = Location(2, "Uni", 52.24020, 21.01843)
@@ -33,12 +37,16 @@ var places: List<Location>? = listOf(place1, place2, place3, place4)
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun PlacesView() {
+fun PlacesView(
+    onBackButtonPressed: () -> Unit,
+) {
 
     var showAddPlaceDialog by remember { mutableStateOf(false) }
 
     if (showAddPlaceDialog) {
-        throw NotImplementedError("Add Place Dialog not implemented yet")
+        AddPlaceDialog(
+            onDismissRequest = { showAddPlaceDialog = false }
+        )
     }
 
     Scaffold(
@@ -47,7 +55,7 @@ fun PlacesView() {
                 title = { Text("Saved Places") },
                 navigationIcon = {
                     IconButton(
-                        onClick = {}
+                        onClick = { onBackButtonPressed() }
                     ) { Icon(Icons.AutoMirrored.Filled.ArrowBack, "Back") }
                 }
             )
@@ -82,6 +90,7 @@ fun Places() {
         Text("No places saved")
         return
     }
+
     for (place in places) {
         Row(
             horizontalArrangement = Arrangement.Start

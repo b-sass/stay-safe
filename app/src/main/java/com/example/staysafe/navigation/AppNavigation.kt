@@ -40,7 +40,9 @@ fun AppNavigation(ctx: Context) {
             ContactView(args.userID)
         }
         composable<Places> {
-            PlacesView()
+            PlacesView(
+                onBackButtonPressed = { navController.popBackStack() }
+            )
         }
         composable<Settings> {
             SettingsView(UserID = 0, navController = navController)
