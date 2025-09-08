@@ -2,6 +2,7 @@ package com.example.staysafe.data.sources
 
 import android.util.Log
 import com.example.staysafe.data.KtorClient
+import com.example.staysafe.data.models.Location
 import com.example.staysafe.data.models.User
 import com.example.staysafe.data.models.UserContact
 import io.ktor.client.HttpClient
@@ -40,7 +41,15 @@ class UserService(
     }
 
     suspend fun getUserContacts(id: Int): List<UserContact> {
-        return client.get("users/contacts/$id").body()
+        return client.get("users/$id/contacts").body()
+    }
+
+    suspend fun getUserLocations(id: Int): List<Location> {
+        return try {
+            client.get("users/$id/locations").body()
+        } catch (e: Exception) {
+            emptyList();
+        }
     }
 
     suspend fun createUser(user: User) {
