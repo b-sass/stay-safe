@@ -20,6 +20,7 @@ class ApiRepository (
     suspend fun getUsers(): List<User> { return userAPI.getUsers() }
     suspend fun getUser(id: Int): User { return userAPI.getUser(id) }
     suspend fun getUserContacts(id: Int): List<UserContact> { return userAPI.getUserContacts(id) }
+    suspend fun getUserLocations(id: Int): List<Location> { return userAPI.getUserLocations(id) }
     suspend fun createUser(user: User) { userAPI.createUser(user) }
     suspend fun updateUser(id: Int, user: User) { userAPI.updateUser(id, user) }
     suspend fun loginUser(username: String, password: String): User? { return userAPI.loginUser(username, password) }
@@ -40,7 +41,7 @@ class ApiRepository (
     // Location
     suspend fun getLocations(): List<Location> { return locationAPI.getLocations() }
     suspend fun getLocation(id: Int): Location { return locationAPI.getLocation(id) }
-    suspend fun createLocation(location: Location) { locationAPI.createLocation(location) }
+    suspend fun createLocation(userID: Int, location: Location) { locationAPI.createLocation(userID, location) }
     suspend fun updateLocation(id: Int) { locationAPI.updateLocation(id) }
     suspend fun deleteLocation(id: Int) { locationAPI.deleteLocation(id) }
 }

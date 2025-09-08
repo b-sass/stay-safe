@@ -5,7 +5,7 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class Location (
-    val id: Int,
+    val id: Int? = null,
     var name: String,
     var latitude: Double,
     var longitude: Double,

@@ -43,6 +43,7 @@ fun LoginView(
         MessageDialog(
             onDismissRequest = { dialogVisible = false },
             message = dialogMessage,
+            onOkButtonClicked = { dialogVisible = false },
         )
     }
 
