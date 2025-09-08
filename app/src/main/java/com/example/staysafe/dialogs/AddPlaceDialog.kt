@@ -35,7 +35,6 @@ import com.example.staysafe.viewModel.PlacesViewModel
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AddPlaceDialog(
-    userID: Int,
     onDismissRequest: () -> Unit
 ) {
     var name by remember { mutableStateOf("") }
@@ -52,7 +51,6 @@ fun AddPlaceDialog(
                 Log.e("AddPlaceDialog", "Please fill in all fields")
             } else {
                 viewModel.createPlace(
-                    userID,
                     Location(
                         name = name,
                         latitude = latitude!!,

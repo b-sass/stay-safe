@@ -14,16 +14,25 @@ object PlacesViewModel: ViewModel() {
     private val _locations = MutableStateFlow<List<Location>>(emptyList())
     var locations = _locations.asStateFlow();
 
-    fun getUserPlaces(userID: Int) {
+    var userID: Int? = null
+
+    fun getUserPlaces() {
         viewModelScope.launch {
-            _locations.value = api.getUserLocations(userID)
+            _locations.value = api.getUserLocations(userID!!)
         }
     }
 
-    fun createPlace(userID: Int, place: Location) {
+    fun createPlace(place: Location) {
         viewModelScope.launch {
-            api.createLocation(userID, place)
-            getUserPlaces(userID)
+            api.createLocation(userID!!, place)
+            getUserPlaces()
+        }
+    }
+
+    fun deletePlace(placeID: Int) {
+        viewModelScope.launch {
+            api.deleteLocation(placeID)
+            getUserPlaces()
         }
     }
 }

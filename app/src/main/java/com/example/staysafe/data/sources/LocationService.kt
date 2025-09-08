@@ -46,6 +46,9 @@ class LocationService (
     }
 
     suspend fun deleteLocation(id: Int) {
-        client.delete("locations/$id")
+        client.delete("locations/") {
+            contentType(ContentType.Application.Json)
+            setBody(mapOf("id" to id))
+        }
     }
 }
