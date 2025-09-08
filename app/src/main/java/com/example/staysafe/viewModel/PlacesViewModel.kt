@@ -8,7 +8,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
-class PlacesViewModel: ViewModel() {
+object PlacesViewModel: ViewModel() {
 
     val api = ApiRepository()
     private val _locations = MutableStateFlow<List<Location>>(emptyList())
@@ -17,6 +17,13 @@ class PlacesViewModel: ViewModel() {
     fun getUserPlaces(userID: Int) {
         viewModelScope.launch {
             _locations.value = api.getUserLocations(userID)
+        }
+    }
+
+    fun createPlace(userID: Int, place: Location) {
+        viewModelScope.launch {
+            api.createLocation(userID, place)
+            getUserPlaces(userID)
         }
     }
 }

@@ -45,6 +45,7 @@ fun ActivityDialog(
     MessageDialog(
         onDismissRequest = onDismissRequest,
         header = "New Activity",
+        onOkButtonClicked = onDismissRequest,
     ) {
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,

@@ -21,6 +21,7 @@ import androidx.compose.ui.unit.dp
 fun MessageDialog(
     message: String? = null,
     header: String = "Alert!",
+    onOkButtonClicked: () -> Unit,
     onDismissRequest: () -> Unit = {},
     content: @Composable () -> Unit = {},
 ) {
@@ -62,7 +63,7 @@ fun MessageDialog(
                 ) {
                     Text(
                         text = "Ok",
-                        modifier = Modifier.clickable { onDismissRequest() }
+                        modifier = Modifier.clickable { onOkButtonClicked() }
                     )
                 }
             }

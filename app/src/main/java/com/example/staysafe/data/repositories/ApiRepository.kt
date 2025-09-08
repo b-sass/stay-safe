@@ -41,7 +41,7 @@ class ApiRepository (
     // Location
     suspend fun getLocations(): List<Location> { return locationAPI.getLocations() }
     suspend fun getLocation(id: Int): Location { return locationAPI.getLocation(id) }
-    suspend fun createLocation(location: Location) { locationAPI.createLocation(location) }
+    suspend fun createLocation(userID: Int, location: Location) { locationAPI.createLocation(userID, location) }
     suspend fun updateLocation(id: Int) { locationAPI.updateLocation(id) }
     suspend fun deleteLocation(id: Int) { locationAPI.deleteLocation(id) }
 }

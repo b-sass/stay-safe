@@ -59,7 +59,8 @@ fun RegisterView(
     if (messageDialog) {
         MessageDialog(
             message = message,
-            onDismissRequest = { messageDialog = false; onDismissRequest() }
+            onDismissRequest = { messageDialog = false; onDismissRequest() },
+            onOkButtonClicked = { messageDialog = false; onDismissRequest() },
         )
     }
 

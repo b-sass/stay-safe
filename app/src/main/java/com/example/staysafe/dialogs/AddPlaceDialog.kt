@@ -29,19 +29,39 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import com.example.staysafe.data.models.Location
+import com.example.staysafe.viewModel.PlacesViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AddPlaceDialog(
+    userID: Int,
     onDismissRequest: () -> Unit
 ) {
     var name by remember { mutableStateOf("") }
     var latitude: Double? by remember { mutableStateOf(null) }
     var longitude: Double? by remember { mutableStateOf(null) }
 
+    val viewModel = PlacesViewModel
+
     MessageDialog(
         onDismissRequest = onDismissRequest,
         header = "New Place",
+        onOkButtonClicked = {
+            if (name.isEmpty() || latitude == null || longitude == null) {
+                Log.e("AddPlaceDialog", "Please fill in all fields")
+            } else {
+                viewModel.createPlace(
+                    userID,
+                    Location(
+                        name = name,
+                        latitude = latitude!!,
+                        longitude = longitude!!
+                    )
+                )
+            }
+            onDismissRequest()
+        }
     ) {
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,

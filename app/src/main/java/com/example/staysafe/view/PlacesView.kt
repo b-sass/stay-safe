@@ -35,7 +35,7 @@ import com.example.staysafe.data.models.Location
 import com.example.staysafe.dialogs.AddPlaceDialog
 import com.example.staysafe.viewModel.PlacesViewModel
 
-var viewModel = PlacesViewModel()
+
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -45,7 +45,7 @@ fun PlacesView(
     onContactsClicked: (userID: Int) -> Unit,
     onSettingsClicked: (userID: Int) -> Unit,
 ) {
-
+    val viewModel = PlacesViewModel
     val places = viewModel.locations.collectAsStateWithLifecycle()
 
     LaunchedEffect(places) {
@@ -56,6 +56,7 @@ fun PlacesView(
 
     if (showAddPlaceDialog) {
         AddPlaceDialog(
+            userID,
             onDismissRequest = { showAddPlaceDialog = false }
         )
     }
