@@ -11,6 +11,12 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.filled.Flag
+import androidx.compose.material.icons.filled.LocationOn
+import androidx.compose.material.icons.outlined.Flag
+import androidx.compose.material.icons.outlined.LocationOn
+import androidx.compose.material.icons.outlined.Person
+import androidx.compose.material.icons.outlined.Settings
 import androidx.compose.material3.Card
 import androidx.compose.material3.Divider
 import androidx.compose.material3.ElevatedCard
@@ -19,6 +25,8 @@ import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.NavigationBar
+import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
@@ -45,7 +53,10 @@ var places: List<Location>? = listOf(place1, place2, place3, place4)
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun PlacesView(
-    onBackButtonPressed: () -> Unit,
+    userID: Int,
+    onMapClicked: (userID: Int) -> Unit,
+    onContactsClicked: (userID: Int) -> Unit,
+    onSettingsClicked: (userID: Int) -> Unit,
 ) {
 
     var showAddPlaceDialog by remember { mutableStateOf(false) }
@@ -60,11 +71,6 @@ fun PlacesView(
         topBar = {
             TopAppBar(
                 title = { Text("Saved Places") },
-                navigationIcon = {
-                    IconButton(
-                        onClick = { onBackButtonPressed() }
-                    ) { Icon(Icons.AutoMirrored.Filled.ArrowBack, "Back") }
-                }
             )
         },
         floatingActionButton = {
@@ -73,7 +79,38 @@ fun PlacesView(
             ) {
                 Icon(Icons.Filled.Add, contentDescription = "Add place")
             }
-        }
+        },
+        bottomBar = {
+            NavigationBar() {
+                // Map
+                NavigationBarItem(
+                    icon = { Icon(Icons.Outlined.LocationOn, contentDescription = "Map") },
+                    label = { Text("Map") },
+                    onClick = { onMapClicked(userID) },
+                    selected = false
+                )
+                // Contacts
+                NavigationBarItem(
+                    icon = { Icon(Icons.Outlined.Person, contentDescription = "Contacts") },
+                    label = { Text("Contacts") },
+                    onClick = { onContactsClicked(userID) },
+                    selected = false
+                )
+                // Places
+                NavigationBarItem(
+                    icon = { Icon(Icons.Filled.Flag, contentDescription = "Places") },
+                    label = { Text("Places") },
+                    onClick = { },
+                    selected = true
+                )
+                NavigationBarItem(
+                    icon = { Icon(Icons.Outlined.Settings, contentDescription = "Settings") },
+                    label = { Text("Settings") },
+                    onClick = { onSettingsClicked(userID) },
+                    selected = false
+                )
+            }
+        },
     ) { innerPadding ->
         Column(
             modifier = Modifier.padding(innerPadding)
