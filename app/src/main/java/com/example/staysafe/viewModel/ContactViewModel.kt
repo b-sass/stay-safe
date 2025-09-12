@@ -3,56 +3,37 @@ package com.example.staysafe.viewModel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.staysafe.data.models.Contact
-import com.example.staysafe.data.models.User
 import com.example.staysafe.data.models.UserContact
 import com.example.staysafe.data.repositories.ApiRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
-class ContactViewModel: ViewModel() {
+object ContactViewModel: ViewModel() {
 
-    private val api = ApiRepository()
+    val api = ApiRepository()
+    private val _contacts = MutableStateFlow<List<UserContact>>(emptyList())
+    var contacts = _contacts.asStateFlow();
 
     var userID: Int? = null
 
-    private val _contacts = MutableStateFlow<List<UserContact>?>(null)
-    var contacts = _contacts.asStateFlow()
-
-    fun getContacts(userID: Int) {
+    fun getUserContacts() {
         viewModelScope.launch {
-            _contacts.value = api.getUserContacts(userID)
+            _contacts.value = api.getUserContacts(userID!!)
         }
     }
 
-    fun addContact(name: String, label: String) {
+    fun createContact(contact: String) {
         viewModelScope.launch {
-            try {
-                val users: List<User> = api.getUsers()
-                users.find { it.username == name }?.let {
-                    api.createContact(
-                        Contact(
-                            userID = userID!!,
-                            contactID = it.id!!,
-                            label = label
-                        )
-                    )
-                }
-            } catch (e: Exception) {
-                e.printStackTrace()
-            }
-        }.invokeOnCompletion {
-            // Refresh contacts list
-            getContacts(userID!!)
+            api.createContact(contact)
+            getUserContacts()
         }
     }
 
-    fun deleteContact(user: Int, contactID: Int) {
+    fun deleteContact(contactID: Int) {
         viewModelScope.launch {
-            api.deleteContact(user, contactID)
-        }.invokeOnCompletion {
-            // Refresh contacts list
-            getContacts(userID!!)
+            api.deleteContact(userID!!, contactID)
+            getUserContacts()
         }
     }
 }

@@ -27,7 +27,7 @@ class ApiRepository (
     suspend fun deleteUser(id: Int) { userAPI.deleteUser(id) }
 
     // Contact
-    suspend fun createContact(contact: Contact) { contactAPI.createContact(contact) }
+    suspend fun createContact(contact: String) { contactAPI.createContact(contact) }
     suspend fun deleteContact(userID: Int, contactID: Int) { contactAPI.deleteContact(userID, contactID) }
 
     // Activity

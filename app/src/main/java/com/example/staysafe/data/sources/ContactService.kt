@@ -12,7 +12,7 @@ import io.ktor.http.contentType
 class ContactService (
     private val client: HttpClient = KtorClient.client
 ) {
-    suspend fun createContact(contact: Contact) {
+    suspend fun createContact(contact: String) {
         client.post("contacts") {
             contentType(ContentType.Application.Json)
             setBody(contact)

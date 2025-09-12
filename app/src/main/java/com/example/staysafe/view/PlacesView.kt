@@ -1,15 +1,11 @@
 package com.example.staysafe.view
 
-import androidx.compose.foundation.focusGroup
-import androidx.compose.foundation.hoverable
-import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.selection.selectable
 import androidx.compose.foundation.selection.selectableGroup
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
@@ -45,7 +41,7 @@ import com.example.staysafe.dialogs.AddPlaceDialog
 import com.example.staysafe.viewModel.PlacesViewModel
 
 
-val viewModel = PlacesViewModel
+private val viewModel = PlacesViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -119,7 +115,7 @@ fun PlacesView(
             modifier = Modifier.padding(innerPadding)
         ) {
 //            TODO: Implement Favourites
-//            Favourites()
+//            FavouritePlaces()
 //            HorizontalDivider()
             Places(places.value)
         }
@@ -127,7 +123,7 @@ fun PlacesView(
 }
 
 @Composable
-fun Favourites() {
+fun FavouritePlaces() {
     throw NotImplementedError("Favourites not implemented yet")
 }
 
