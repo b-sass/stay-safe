@@ -10,7 +10,6 @@ data class UserContact (
     @SerialName("last_name") val lastName: String,
     val phone: String,
     val username: String,
-    val password: String,
     val latitude: Double?,
     val longitude: Double?,
 //    @SerialName("UserImageURL") val imageURL: String,

@@ -1,155 +1,158 @@
 package com.example.staysafe.view
 
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
-import androidx.compose.foundation.lazy.grid.GridCells
-import androidx.compose.foundation.lazy.grid.items
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.selection.selectableGroup
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.filled.Person
+import androidx.compose.material.icons.outlined.Flag
+import androidx.compose.material.icons.outlined.LocationOn
+import androidx.compose.material.icons.outlined.Settings
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.font.FontStyle
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.lifecycle.viewmodel.compose.viewModel
-import com.example.staysafe.data.models.Contact
 import com.example.staysafe.data.models.UserContact
+import com.example.staysafe.dialogs.AddContactDialog
+import com.example.staysafe.dialogs.AddPlaceDialog
 import com.example.staysafe.viewModel.ContactViewModel
-import kotlinx.coroutines.launch
 
+private val viewModel = ContactViewModel
+
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ContactView(
+fun ContactsView(
     userID: Int,
-    viewModel: ContactViewModel = viewModel()
+    onMapClicked: (userID: Int) -> Unit,
+    onPlacesClicked: (userID: Int) -> Unit,
+    onSettingsClicked: (userID: Int) -> Unit,
 ) {
     viewModel.userID = userID
-    var contacts = viewModel.contacts.collectAsStateWithLifecycle()
+    val contacts = viewModel.contacts.collectAsStateWithLifecycle()
 
-    var isEditing by remember { mutableStateOf(false) }
-    var currentContact by remember { mutableStateOf<UserContact?>(null) }
-    var showAdd by remember { mutableStateOf(false) }
-    val snackbarHostState = remember { SnackbarHostState() }
-    val coroutineScope = rememberCoroutineScope()
+    LaunchedEffect(contacts) {
+        viewModel.getUserContacts()
+    }
 
-    viewModel.getContacts(userID)
+    var showAddContactDialog by remember { mutableStateOf(false) }
 
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(8.dp)
-    ) {
+    if (showAddContactDialog) {
+        AddContactDialog(
+            onDismissRequest = { showAddContactDialog = false }
+        )
+    }
 
-        LazyVerticalGrid(
-            columns = GridCells.Fixed(2),
-            modifier = Modifier.weight(1f)
-        ) {
-            items(contacts.value ?: emptyList()) { contact ->
-                ContactCard(
-                    contact = contact,
-                    onDelete = {
-                        viewModel.deleteContact(userID, contact.id!!)
-                        coroutineScope.launch {
-                            snackbarHostState.showSnackbar("Contact deleted: ${contact.label}")
-                        }
-                    },
-                    onEdit = {
-                        currentContact = contact
-                        isEditing = true
-                    },
-                    modifier = Modifier.padding(8.dp)
+    Scaffold(
+        topBar = {
+            TopAppBar(
+                title = { Text("Saved Contacts") },
+            )
+        },
+        floatingActionButton = {
+            FloatingActionButton(
+                onClick = { showAddContactDialog = true }
+            ) {
+                Icon(Icons.Filled.Add, contentDescription = "Add place")
+            }
+        },
+        bottomBar = {
+            NavigationBar() {
+                // Map
+                NavigationBarItem(
+                    icon = { Icon(Icons.Outlined.LocationOn, contentDescription = "Map") },
+                    label = { Text("Map") },
+                    onClick = { onMapClicked(userID) },
+                    selected = false
+                )
+                // Contacts
+                NavigationBarItem(
+                    icon = { Icon(Icons.Filled.Person, contentDescription = "Contacts") },
+                    label = { Text("Contacts") },
+                    onClick = { },
+                    selected = true
+                )
+                // Places
+                NavigationBarItem(
+                    icon = { Icon(Icons.Outlined.Flag, contentDescription = "Places") },
+                    label = { Text("Places") },
+                    onClick = { onPlacesClicked(userID) },
+                    selected = false
+                )
+                NavigationBarItem(
+                    icon = { Icon(Icons.Outlined.Settings, contentDescription = "Settings") },
+                    label = { Text("Settings") },
+                    onClick = { onSettingsClicked(userID) },
+                    selected = false
                 )
             }
-        }
-
-
-        Button(
-            onClick = { showAdd = true },
-            modifier = Modifier.align(Alignment.End)
+        },
+    ) { innerPadding ->
+        Column(
+            modifier = Modifier.padding(innerPadding)
         ) {
-            Text("Add Contact")
+//            TODO: Implement Favourites
+//            Favourites()
+//            HorizontalDivider()
+            Contacts(contacts.value)
         }
-        if (showAdd) {
-            AddContactButton(
-                userID = userID,
-                onDismiss = { showAdd = false },
-                onAdd = {
-                    coroutineScope.launch {
-                        snackbarHostState.showSnackbar("Contact added")
-                    }
-                    viewModel.getContacts(userID)
-                    showAdd = false
-                }
-            )
-        }
-
-        SnackbarHost(hostState = snackbarHostState)
     }
 }
 
 @Composable
-fun ContactCard(
-    contact: UserContact,
-    onDelete: () -> Unit,
-    onEdit: () -> Unit,
-    modifier: Modifier = Modifier
-) {
-    Card(
-        modifier = modifier
-            .fillMaxWidth()
-            .clickable(onClick = onEdit),
-        elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
+fun FavouriteContacts() {
+    throw NotImplementedError("Favourites not implemented yet")
+}
+
+@Composable
+fun Contacts(contacts: List<UserContact>) {
+    if (contacts.isEmpty()) {
+        Text("No contacts saved")
+        return
+    }
+
+    LazyColumn(
+        modifier = Modifier.padding(8.dp).selectableGroup()
     ) {
-        Column(modifier = Modifier.padding(16.dp)) {
-            Text(text = contact.label, style = MaterialTheme.typography.titleMedium)
-//            Text(text = "User  ID: ${contact.id}", style = MaterialTheme.typography.bodyMedium)
-            Text(text = "Contact ID: ${contact.id!!}", style = MaterialTheme.typography.bodyMedium)
-            Spacer(modifier = Modifier.height(8.dp))
-
-            Row(
-                horizontalArrangement = Arrangement.End,
-                modifier = Modifier.fillMaxWidth()
-            ) {
-                IconButton(onClick = onDelete) {
-                    Icon(Icons.Default.Delete, contentDescription = "Delete Contact")
-                }
-            }
+        items(contacts.size) { contact ->
+            ContactCard(contacts[contact])
         }
     }
 }
 
 @Composable
-fun AddContactButton(
-    userID: Int,
-    viewModel: ContactViewModel = viewModel(),
-    onDismiss: () -> Unit,
-    onAdd: () -> Unit,
-) {
-    var name by remember { mutableStateOf("fartsmella") }
-    var label by remember { mutableStateOf("stinky") }
+fun ContactCard(contact: UserContact) {
+    ElevatedCard(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(bottom = 8.dp)
+    ) {
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            Column(
+                modifier = Modifier.padding(8.dp),
+                verticalArrangement = Arrangement.spacedBy(4.dp)
+            ) {
+                Text(text = contact.label, fontWeight = FontWeight.Bold)
 
-    AlertDialog(
-        onDismissRequest = onDismiss,
-        title = { Text("Add Contact") },
-        text = {
-            Column {
-                TextField(value = name, onValueChange = { name = it }, label = { Text("Contact Username") })
-                TextField(value = label, onValueChange = { label = it }, label = { Text("Contact Label") })
+                Text(text = "${contact.username} | ${contact.latitude}, ${contact.longitude}", fontWeight = FontWeight.Thin,  fontStyle = FontStyle.Italic)
             }
-        },
-        confirmButton = {
-            Button(onClick = {
-                viewModel.addContact(name, label)
-                onAdd()
-            }) {
-                Text("Add")
-            }
-        },
-        dismissButton = {
-            Button(onClick = onDismiss) {
-                Text("Cancel")
+            IconButton(
+                onClick = {
+                    viewModel.deleteContact(contact.id!!)
+                }
+            ) {
+                Icon(Icons.Filled.Delete, "Delete Place Button")
             }
         }
-    )
+    }
 }
+

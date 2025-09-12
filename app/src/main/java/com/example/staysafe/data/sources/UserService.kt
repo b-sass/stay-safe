@@ -41,7 +41,11 @@ class UserService(
     }
 
     suspend fun getUserContacts(id: Int): List<UserContact> {
-        return client.get("users/$id/contacts").body()
+        return try {
+            client.get("users/$id/contacts").body()
+        } catch (e: Exception) {
+            emptyList();
+        }
     }
 
     suspend fun getUserLocations(id: Int): List<Location> {
