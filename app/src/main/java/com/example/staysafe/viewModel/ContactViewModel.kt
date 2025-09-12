@@ -9,7 +9,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
-object ContactViewModel: ViewModel() {
+class ContactViewModel: ViewModel() {
 
     val api = ApiRepository()
     private val _contacts = MutableStateFlow<List<UserContact>>(emptyList())

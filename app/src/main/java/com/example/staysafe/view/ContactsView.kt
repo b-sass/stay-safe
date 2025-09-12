@@ -18,16 +18,16 @@ import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.staysafe.data.models.UserContact
 import com.example.staysafe.dialogs.AddContactDialog
 import com.example.staysafe.dialogs.AddPlaceDialog
 import com.example.staysafe.viewModel.ContactViewModel
 
-private val viewModel = ContactViewModel
-
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ContactsView(
+    viewModel: ContactViewModel = viewModel(),
     userID: Int,
     onMapClicked: (userID: Int) -> Unit,
     onPlacesClicked: (userID: Int) -> Unit,
@@ -99,7 +99,9 @@ fun ContactsView(
 //            TODO: Implement Favourites
 //            Favourites()
 //            HorizontalDivider()
-            Contacts(contacts.value)
+            Contacts(contacts.value) { contactID ->
+                viewModel.deleteContact(contactID)
+            }
         }
     }
 }
@@ -110,7 +112,7 @@ fun FavouriteContacts() {
 }
 
 @Composable
-fun Contacts(contacts: List<UserContact>) {
+fun Contacts(contacts: List<UserContact>, onContactClick: (Int) -> Unit) {
     if (contacts.isEmpty()) {
         Text("No contacts saved")
         return
@@ -120,13 +122,18 @@ fun Contacts(contacts: List<UserContact>) {
         modifier = Modifier.padding(8.dp).selectableGroup()
     ) {
         items(contacts.size) { contact ->
-            ContactCard(contacts[contact])
+            ContactCard(contacts[contact]) { contactID ->
+                onContactClick(contactID)
+            }
         }
     }
 }
 
 @Composable
-fun ContactCard(contact: UserContact) {
+fun ContactCard(
+    contact: UserContact,
+    onClick: (Int) -> Unit,
+) {
     ElevatedCard(
         modifier = Modifier
             .fillMaxWidth()
@@ -147,7 +154,7 @@ fun ContactCard(contact: UserContact) {
             }
             IconButton(
                 onClick = {
-                    viewModel.deleteContact(contact.id!!)
+                    onClick(contact.id!!)
                 }
             ) {
                 Icon(Icons.Filled.Delete, "Delete Place Button")
