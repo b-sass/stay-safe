@@ -29,19 +29,20 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.staysafe.data.models.Location
 import com.example.staysafe.viewModel.PlacesViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AddPlaceDialog(
+    viewModel: PlacesViewModel = viewModel(),
     onDismissRequest: () -> Unit
 ) {
     var name by remember { mutableStateOf("") }
     var latitude: Double? by remember { mutableStateOf(null) }
     var longitude: Double? by remember { mutableStateOf(null) }
 
-    val viewModel = PlacesViewModel
 
     MessageDialog(
         onDismissRequest = onDismissRequest,

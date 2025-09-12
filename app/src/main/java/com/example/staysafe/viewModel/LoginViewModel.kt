@@ -9,7 +9,6 @@ import kotlinx.coroutines.launch
 
 class LoginViewModel: ViewModel() {
     val api = ApiRepository()
-    var users: List<User> = mutableStateListOf<User>()
     var loggedInUser: User? = null
 
     fun getUserWithCredentials(username: String, password: String) {

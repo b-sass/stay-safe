@@ -29,6 +29,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.staysafe.data.models.Location
 import com.example.staysafe.viewModel.ContactViewModel
 import com.example.staysafe.viewModel.PlacesViewModel
@@ -36,12 +37,11 @@ import com.example.staysafe.viewModel.PlacesViewModel
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AddContactDialog(
+    viewModel: ContactViewModel = viewModel(),
     onDismissRequest: () -> Unit
 ) {
     var username by remember { mutableStateOf("") }
     var label by remember { mutableStateOf("") }
-
-    val viewModel = ContactViewModel
 
     MessageDialog(
         onDismissRequest = onDismissRequest,

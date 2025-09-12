@@ -36,16 +36,15 @@ import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.staysafe.data.models.Location
 import com.example.staysafe.dialogs.AddPlaceDialog
 import com.example.staysafe.viewModel.PlacesViewModel
 
-
-private val viewModel = PlacesViewModel
-
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun PlacesView(
+    viewModel: PlacesViewModel = viewModel(),
     userID: Int,
     onMapClicked: (userID: Int) -> Unit,
     onContactsClicked: (userID: Int) -> Unit,
@@ -117,7 +116,9 @@ fun PlacesView(
 //            TODO: Implement Favourites
 //            FavouritePlaces()
 //            HorizontalDivider()
-            Places(places.value)
+            Places(places.value) { placeID ->
+                viewModel.deletePlace(placeID)
+            }
         }
     }
 }
@@ -128,7 +129,7 @@ fun FavouritePlaces() {
 }
 
 @Composable
-fun Places(places: List<Location>) {
+fun Places(places: List<Location>, onPlaceClicked: (Int) -> Unit) {
     if (places.isEmpty()) {
         Text("No places saved")
         return
@@ -138,13 +139,18 @@ fun Places(places: List<Location>) {
         modifier = Modifier.padding(8.dp).selectableGroup()
     ) {
         items(places.size) { place ->
-            PlaceCard(places[place])
+            PlaceCard(places[place]) { placeID ->
+                onPlaceClicked(placeID)
+            }
         }
     }
 }
 
 @Composable
-fun PlaceCard(place: Location) {
+fun PlaceCard(
+    place: Location,
+    onClick: (Int) -> Unit,
+) {
     ElevatedCard(
         modifier = Modifier
             .fillMaxWidth()
@@ -165,7 +171,7 @@ fun PlaceCard(place: Location) {
             }
             IconButton(
                 onClick = {
-                    viewModel.deletePlace(place.id!!)
+                    onClick(place.id!!)
                 }
             ) {
                 Icon(Icons.Filled.Delete, "Delete Place Button")
