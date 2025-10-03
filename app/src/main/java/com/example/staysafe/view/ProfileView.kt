@@ -1,12 +1,18 @@
 package com.example.staysafe.view
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.outlined.DirectionsWalk
 import androidx.compose.material.icons.filled.Flag
+import androidx.compose.material.icons.outlined.DirectionsWalk
 import androidx.compose.material.icons.outlined.LocationOn
+import androidx.compose.material.icons.outlined.Notifications
 import androidx.compose.material.icons.outlined.Person
 import androidx.compose.material.icons.outlined.Settings
 import androidx.compose.material3.*
@@ -15,9 +21,11 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -37,8 +45,7 @@ fun ProfileView(
     onPlacesClicked: (userID: Int) -> Unit,
 ) {
     val user = viewModel.user.collectAsStateWithLifecycle()
-    val selectedTab by remember { mutableIntStateOf(0) }
-    val tabs = listOf("Stats", "Settings")
+    var selectedTab by remember { mutableIntStateOf(0) }
 
 
     LaunchedEffect(user) {
@@ -88,13 +95,28 @@ fun ProfileView(
         ) {
             UserDetails(user.value)
 
-            SecondaryTabRow(selectedTabIndex = selectedTab) {
-                tabs.forEachIndexed { index, tab ->
-                    Tab(
+            Spacer(modifier = Modifier.padding(8.dp))
 
-                        )
-                }
+            SecondaryTabRow(selectedTabIndex = selectedTab) {
+                Tab(
+                    selected = selectedTab == 0,
+                    text = { Text("Stats") },
+                    onClick = { selectedTab = 0}
+                )
+                Tab(
+                    selected = selectedTab == 1,
+                    text = {Text("Settings")},
+                    onClick = { selectedTab = 1}
+                )
             }
+
+            //TODO: Replace with HorizontalPager
+            when (selectedTab) {
+                0 -> StatsPage(user.value)
+                1 -> SettingsPage(user.value)
+            }
+
+
         }
     }
 }
@@ -127,16 +149,57 @@ fun UserDetails(user: User?) {
 }
 
 @Composable
-fun UserStats(user: User?) {
-    Column() {
-        Text("No. contacts: 0")
-        Text("No. places: 1")
-        Text("No. activities: 2")
+fun StatsPage(user: User?) {
+    Column(
+        modifier = Modifier.fillMaxWidth()
+            .padding(vertical = 24.dp)
+    ) {
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceEvenly
+        ) {
+            StatCard("Contacts", 15, Icons.Outlined.Person)
+            StatCard("Activities", 24, Icons.AutoMirrored.Outlined.DirectionsWalk)
+        }
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceEvenly
+        ) {
+            StatCard("Places", 8, Icons.Outlined.LocationOn)
+            StatCard("Panic Button", 2, Icons.Outlined.Notifications)
+        }
     }
 }
 
 @Composable
-fun SettingsPage() {
+fun StatCard(
+    title: String,
+    value: Int,
+    icon: ImageVector
+) {
+    Box(
+        modifier = Modifier.size(120.dp),
+    ) {
+        Column(
+            modifier = Modifier.fillMaxSize(),
+            verticalArrangement = Arrangement.Center,
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            Text(title)
+            HorizontalDivider(modifier = Modifier.padding(vertical = 4.dp))
+            Row(
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Icon(icon, contentDescription = "$title icon")
+                Spacer(modifier = Modifier.size(4.dp))
+                Text(text = value.toString(), fontSize = MaterialTheme.typography.bodyLarge.fontSize)
+            }
+        }
+    }
+}
+
+@Composable
+fun SettingsPage(user: User?) {
     UpdateDetails()
 
     Spacer(modifier = Modifier.height(16.dp))
@@ -172,4 +235,15 @@ fun UpdateDetails() {
             }
         }
     }
+}
+
+@Preview
+@Composable
+fun ProfilePreview() {
+    ProfileView(
+        userID = 1,
+        onMapClicked = {},
+        onPlacesClicked = {},
+        onContactsClicked = {}
+    )
 }
