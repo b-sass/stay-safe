@@ -6,6 +6,7 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.pager.HorizontalPager
+import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.outlined.DirectionsWalk
@@ -34,6 +35,7 @@ import com.example.staysafe.R
 import com.example.staysafe.data.models.User
 import com.example.staysafe.viewModel.ProfileViewModel
 import com.google.maps.android.compose.Circle
+import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -46,10 +48,17 @@ fun ProfileView(
 ) {
     val user = viewModel.user.collectAsStateWithLifecycle()
     var selectedTab by remember { mutableIntStateOf(0) }
+    val pagerState = rememberPagerState { 2 }
+    val scope = rememberCoroutineScope()
+
 
 
     LaunchedEffect(user) {
         viewModel.getUser(userID)
+    }
+
+    LaunchedEffect(pagerState.currentPage) {
+        selectedTab = pagerState.currentPage
     }
 
     Scaffold(
@@ -101,20 +110,33 @@ fun ProfileView(
                 Tab(
                     selected = selectedTab == 0,
                     text = { Text("Stats") },
-                    onClick = { selectedTab = 0}
+                    onClick = { scope.launch {
+                        pagerState.animateScrollToPage(0)
+                    } }
                 )
                 Tab(
                     selected = selectedTab == 1,
                     text = {Text("Settings")},
-                    onClick = { selectedTab = 1}
+                    onClick = { scope.launch {
+                        pagerState.animateScrollToPage(1)
+                    } }
                 )
             }
 
             //TODO: Replace with HorizontalPager
-            when (selectedTab) {
-                0 -> StatsPage(user.value)
-                1 -> SettingsPage(user.value)
+
+
+            HorizontalPager(
+                state = pagerState,
+                modifier = Modifier.fillMaxSize(),
+                verticalAlignment = Alignment.Top
+            ) { page ->
+                when (page) {
+                    0 -> { StatsPage(user.value) }
+                    1 -> { SettingsPage(user.value) }
+                }
             }
+
 
 
         }
