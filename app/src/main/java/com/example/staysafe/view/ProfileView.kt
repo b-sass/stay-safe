@@ -1,8 +1,8 @@
 package com.example.staysafe.view
 
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.pager.HorizontalPager
@@ -10,12 +10,11 @@ import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.outlined.DirectionsWalk
-import androidx.compose.material.icons.filled.Flag
-import androidx.compose.material.icons.outlined.DirectionsWalk
+import androidx.compose.material.icons.filled.Person
+import androidx.compose.material.icons.outlined.Flag
 import androidx.compose.material.icons.outlined.LocationOn
 import androidx.compose.material.icons.outlined.Notifications
 import androidx.compose.material.icons.outlined.Person
-import androidx.compose.material.icons.outlined.Settings
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -25,17 +24,13 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.staysafe.R
 import com.example.staysafe.data.models.User
 import com.example.staysafe.viewModel.ProfileViewModel
-import com.google.maps.android.compose.Circle
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -86,13 +81,13 @@ fun ProfileView(
                 )
                 // Places
                 NavigationBarItem(
-                    icon = { Icon(Icons.Filled.Flag, contentDescription = "Places") },
+                    icon = { Icon(Icons.Outlined.Flag, contentDescription = "Places") },
                     label = { Text("Places") },
                     onClick = { onPlacesClicked(userID) },
                     selected = false
                 )
                 NavigationBarItem(
-                    icon = { Icon(Icons.Outlined.Person, contentDescription = "Profile") },
+                    icon = { Icon(Icons.Filled.Person, contentDescription = "Profile") },
                     label = { Text("Settings") },
                     onClick = { },
                     selected = true
@@ -226,14 +221,15 @@ fun SettingsPage(user: User?) {
 
     Column() {
         AppSettings()
-
-        AccountSettings()
+        AccountSettings(user)
     }
 
 }
 
 @Composable
 fun AppSettings() {
+    var themeState by remember { mutableStateOf(false) }
+
     Column(
         modifier = Modifier.padding(top = 16.dp, start = 16.dp, end = 16.dp)
     ) {
@@ -242,12 +238,17 @@ fun AppSettings() {
         SettingRow(
             "Toggle theme",
             "Dark mode"
-        )
+        ) {
+            Switch(
+                checked = themeState,
+                onCheckedChange = { themeState = !themeState}
+            )
+        }
     }
 }
 
 @Composable
-fun AccountSettings() {
+fun AccountSettings(user: User?) {
 
     Column(
         modifier = Modifier.padding(top = 16.dp, start = 16.dp, end = 16.dp)
@@ -260,7 +261,7 @@ fun AccountSettings() {
 
         SettingRow(
             "Update username",
-            "[username]"
+            "[${user?.username ?: "Loading.."}]"
         )
 
         SettingRow(
@@ -282,19 +283,19 @@ fun AccountSettings() {
 fun SettingRow(
     title: String,
     description: String = "",
+    onClick: () -> Unit = {},
+    content: @Composable () -> Unit = {}
 ) {
 
-    Row(
-        modifier = Modifier.padding(vertical = 8.dp)
-            .fillMaxWidth()
+    SettingRow(
+        title = title,
+        description = description,
+        titleColor = Color.Black,
+        onClick = onClick,
+        descriptionColor = Color.Gray
     ) {
-        Column() {
-            Text(title, modifier = Modifier.padding(bottom = 4.dp))
-            if (description.isNotEmpty()) Text(description, color = Color.Gray)
-        }
+        content()
     }
-
-//    HorizontalDivider()
 }
 
 @Composable
@@ -302,26 +303,36 @@ fun SettingRow(
     title: String,
     description: String = "",
     titleColor: Color,
-    descriptionColor: Color
+    descriptionColor: Color,
+    onClick: () -> Unit = {},
+    content: @Composable () -> Unit = {}
 ) {
 
     Row(
-        modifier = Modifier.padding(vertical = 8.dp)
+        horizontalArrangement = Arrangement.SpaceBetween,
+        verticalAlignment = Alignment.CenterVertically,
+        modifier = Modifier
             .fillMaxWidth()
+            .clickable { onClick }
+            .padding(vertical = 8.dp)
     ) {
         Column() {
             Text(
                 text = title,
                 modifier = Modifier.padding(bottom = 4.dp),
-                color = titleColor
+                color = titleColor,
+                fontSize = MaterialTheme.typography.bodyLarge.fontSize
             )
             if (description.isNotEmpty()) {
                 Text(
                     description,
-                    color = descriptionColor
+                    color = descriptionColor,
+                    fontSize = MaterialTheme.typography.bodyMedium.fontSize
                 )
             }
         }
+
+        content()
     }
 }
 
