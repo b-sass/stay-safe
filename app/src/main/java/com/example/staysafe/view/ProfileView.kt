@@ -26,6 +26,7 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
@@ -236,7 +237,7 @@ fun AppSettings() {
     Column(
         modifier = Modifier.padding(top = 16.dp, start = 16.dp, end = 16.dp)
     ) {
-        Text("App Settings")
+        Text("App Settings", color = MaterialTheme.colorScheme.primary)
 
         SettingRow(
             "Toggle theme",
@@ -251,7 +252,7 @@ fun AccountSettings() {
     Column(
         modifier = Modifier.padding(top = 16.dp, start = 16.dp, end = 16.dp)
     ) {
-        Text("Account Settings")
+        Text("Account Settings", color = MaterialTheme.colorScheme.primary)
 
         SettingRow(
             "Update profile photo"
@@ -269,7 +270,9 @@ fun AccountSettings() {
 
         SettingRow(
             "Delete account",
-            "This action cannot be undone"
+            "This action cannot be undone",
+            titleColor = MaterialTheme.colorScheme.error,
+            descriptionColor = MaterialTheme.colorScheme.onErrorContainer
         )
     }
 
@@ -278,7 +281,7 @@ fun AccountSettings() {
 @Composable
 fun SettingRow(
     title: String,
-    description: String = ""
+    description: String = "",
 ) {
 
     Row(
@@ -287,11 +290,39 @@ fun SettingRow(
     ) {
         Column() {
             Text(title, modifier = Modifier.padding(bottom = 4.dp))
-            if (description.isNotEmpty()) Text(description)
+            if (description.isNotEmpty()) Text(description, color = Color.Gray)
         }
     }
 
 //    HorizontalDivider()
+}
+
+@Composable
+fun SettingRow(
+    title: String,
+    description: String = "",
+    titleColor: Color,
+    descriptionColor: Color
+) {
+
+    Row(
+        modifier = Modifier.padding(vertical = 8.dp)
+            .fillMaxWidth()
+    ) {
+        Column() {
+            Text(
+                text = title,
+                modifier = Modifier.padding(bottom = 4.dp),
+                color = titleColor
+            )
+            if (description.isNotEmpty()) {
+                Text(
+                    description,
+                    color = descriptionColor
+                )
+            }
+        }
+    }
 }
 
 @Preview
