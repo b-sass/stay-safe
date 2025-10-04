@@ -132,8 +132,8 @@ fun ProfileView(
                 verticalAlignment = Alignment.Top
             ) { page ->
                 when (page) {
-                    0 -> { StatsPage(user.value) }
-                    1 -> { SettingsPage(user.value) }
+                    1 -> { StatsPage(user.value) }
+                    0 -> { SettingsPage(user.value) }
                 }
             }
 
@@ -222,41 +222,76 @@ fun StatCard(
 
 @Composable
 fun SettingsPage(user: User?) {
-    UpdateDetails()
 
-    Spacer(modifier = Modifier.height(16.dp))
+    Column() {
+        AppSettings()
 
-    Button(
-        onClick = {}
+        AccountSettings()
+    }
+
+}
+
+@Composable
+fun AppSettings() {
+    Column(
+        modifier = Modifier.padding(top = 16.dp, start = 16.dp, end = 16.dp)
     ) {
-        Text("Delete account")
+        Text("App Settings")
+
+        SettingRow(
+            "Toggle theme",
+            "Dark mode"
+        )
     }
 }
 
 @Composable
-fun UpdateDetails() {
+fun AccountSettings() {
+
     Column(
-        horizontalAlignment = Alignment.CenterHorizontally
+        modifier = Modifier.padding(top = 16.dp, start = 16.dp, end = 16.dp)
     ) {
-        Text("Update your details")
-        Row(
-            modifier = Modifier.padding(horizontal = 16.dp)
-        ) {
-            Button(
-                onClick = {}
-            ) {
-                Text("Change username")
-            }
+        Text("Account Settings")
 
-            Spacer(modifier = Modifier.width(8.dp))
+        SettingRow(
+            "Update profile photo"
+        )
 
-            Button(
-                onClick = {}
-            ) {
-                Text("Change password")
-            }
+        SettingRow(
+            "Update username",
+            "[username]"
+        )
+
+        SettingRow(
+            "Update password",
+            "[********]"
+        )
+
+        SettingRow(
+            "Delete account",
+            "This action cannot be undone"
+        )
+    }
+
+}
+
+@Composable
+fun SettingRow(
+    title: String,
+    description: String = ""
+) {
+
+    Row(
+        modifier = Modifier.padding(vertical = 8.dp)
+            .fillMaxWidth()
+    ) {
+        Column() {
+            Text(title, modifier = Modifier.padding(bottom = 4.dp))
+            if (description.isNotEmpty()) Text(description)
         }
     }
+
+//    HorizontalDivider()
 }
 
 @Preview
