@@ -20,4 +20,37 @@ class ProfileViewModel: ViewModel() {
             _user.value = api.getUser(userID)
         }
     }
+
+    fun updateUsername(userID: Int, username: String) {
+        viewModelScope.launch {
+            try {
+                api.updateUser(
+                    userID, """
+                    {
+                        "username": "$username"
+                    }
+                """.trimIndent()
+                )
+
+                getUser(userID)
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
+        }
+    }
+
+    fun updatePassword(userID: Int, password: String) {
+        viewModelScope.launch {
+            try {
+                api.updateUser(userID, """
+                    {
+                        "password": "$password"
+                    }
+                """.trimIndent())
+                getUser(userID)
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
+        }
+    }
 }

@@ -221,7 +221,7 @@ fun SettingsPage(user: User?) {
 
     Column() {
         AppSettings()
-        AccountSettings(user)
+        AccountSettings(user = user)
     }
 
 }
@@ -248,7 +248,10 @@ fun AppSettings() {
 }
 
 @Composable
-fun AccountSettings(user: User?) {
+fun AccountSettings(
+    viewModel: ProfileViewModel = viewModel(),
+    user: User?
+) {
 
     var showUsernameUpdate by remember { mutableStateOf(false) }
     var showPasswordUpdate by remember { mutableStateOf(false) }
@@ -260,7 +263,7 @@ fun AccountSettings(user: User?) {
 
         MessageDialog(
             header = "Update username",
-            onOkButtonClicked = { showUsernameUpdate = false },
+            onOkButtonClicked = { viewModel.updateUsername(user?.id!!, newUsername); showUsernameUpdate = false },
             onDismissRequest = { showUsernameUpdate = false },
             okButtonLabel = "Save"
         ) {
@@ -277,7 +280,7 @@ fun AccountSettings(user: User?) {
 
         MessageDialog(
             header = "Update password",
-            onOkButtonClicked = { showPasswordUpdate = false },
+            onOkButtonClicked = { viewModel.updatePassword(user?.id!!, newPassword); showPasswordUpdate = false },
             onDismissRequest = { showPasswordUpdate = false },
             okButtonLabel = "Save"
         ) {

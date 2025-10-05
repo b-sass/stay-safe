@@ -64,8 +64,11 @@ class UserService(
         }
     }
 
-    suspend fun updateUser(id: Int, user: User) {
-        client.put("users/$id") // TODO: send user object
+    suspend fun updateUser(id: Int, request: String) {
+        client.put("users/$id") {
+            contentType(ContentType.Application.Json)
+            setBody(request)
+        }
     }
 
     suspend fun deleteUser(id: Int) {
