@@ -34,6 +34,7 @@ import com.example.staysafe.data.models.User
 import com.example.staysafe.dialogs.MessageDialog
 import com.example.staysafe.viewModel.ProfileViewModel
 import kotlinx.coroutines.launch
+import kotlin.math.absoluteValue
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -127,7 +128,7 @@ fun ProfileView(
                 verticalAlignment = Alignment.Top
             ) { page ->
                 when (page) {
-                    0 -> { StatsPage(user.value) }
+                    0 -> { StatsPage(user = user.value) }
                     1 -> { SettingsPage(user.value) }
                 }
             }
@@ -163,7 +164,27 @@ fun UserDetails(user: User?) {
 }
 
 @Composable
-fun StatsPage(user: User?) {
+fun StatsPage(
+    viewModel: ProfileViewModel = viewModel(),
+    user: User?
+) {
+    val contacts = viewModel.contacts.collectAsStateWithLifecycle()
+    val activities = viewModel.activities.collectAsStateWithLifecycle()
+    val places = viewModel.places.collectAsStateWithLifecycle()
+    val panics = 0
+
+    LaunchedEffect(contacts) {
+        viewModel.getUserContacts(user?.id ?: 1)
+    }
+
+    LaunchedEffect(activities) {
+        viewModel.getUserActivities(user?.id ?: 1)
+    }
+
+    LaunchedEffect(places) {
+        viewModel.getUserPlaces(user?.id ?: 1)
+    }
+
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -173,15 +194,15 @@ fun StatsPage(user: User?) {
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceEvenly
         ) {
-            StatCard("Contacts", 15, Icons.Outlined.Person)
-            StatCard("Activities", 24, Icons.AutoMirrored.Outlined.DirectionsWalk)
+            StatCard("Contacts", contacts.value.size, Icons.Outlined.Person)
+            StatCard("Activities", activities.value.size, Icons.AutoMirrored.Outlined.DirectionsWalk)
         }
         Row(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceEvenly
         ) {
-            StatCard("Places", 8, Icons.Outlined.LocationOn)
-            StatCard("Panic Button", 2, Icons.Outlined.Notifications)
+            StatCard("Places", places.value.size, Icons.Outlined.LocationOn)
+            StatCard("Panic Button", panics, Icons.Outlined.Notifications)
         }
     }
 }
