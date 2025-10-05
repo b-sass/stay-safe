@@ -4,6 +4,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.BasicAlertDialog
@@ -23,6 +24,8 @@ fun MessageDialog(
     header: String = "Alert!",
     onOkButtonClicked: () -> Unit,
     onDismissRequest: () -> Unit = {},
+    okButtonLabel: String = "Ok",
+    cancelButtonLabel: String = "Cancel",
     content: @Composable () -> Unit = {},
 ) {
     BasicAlertDialog(
@@ -62,7 +65,12 @@ fun MessageDialog(
                     horizontalArrangement = Arrangement.End
                 ) {
                     Text(
-                        text = "Ok",
+                        text = cancelButtonLabel,
+                        modifier = Modifier.clickable { onDismissRequest() }
+                    )
+                    Spacer(modifier = Modifier.padding(horizontal = 8.dp))
+                    Text(
+                        text = okButtonLabel,
                         modifier = Modifier.clickable { onOkButtonClicked() }
                     )
                 }
