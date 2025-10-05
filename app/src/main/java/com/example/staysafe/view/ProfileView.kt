@@ -1,5 +1,6 @@
 package com.example.staysafe.view
 
+import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -30,6 +31,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.staysafe.R
 import com.example.staysafe.data.models.User
+import com.example.staysafe.dialogs.MessageDialog
 import com.example.staysafe.viewModel.ProfileViewModel
 import kotlinx.coroutines.launch
 
@@ -119,9 +121,6 @@ fun ProfileView(
                 )
             }
 
-            //TODO: Replace with HorizontalPager
-
-
             HorizontalPager(
                 state = pagerState,
                 modifier = Modifier.fillMaxSize(),
@@ -169,7 +168,8 @@ fun UserDetails(user: User?) {
 @Composable
 fun StatsPage(user: User?) {
     Column(
-        modifier = Modifier.fillMaxWidth()
+        modifier = Modifier
+            .fillMaxWidth()
             .padding(vertical = 24.dp)
     ) {
         Row(
@@ -250,6 +250,56 @@ fun AppSettings() {
 @Composable
 fun AccountSettings(user: User?) {
 
+    var showUsernameUpdate by remember { mutableStateOf(false) }
+    var showPasswordUpdate by remember { mutableStateOf(false) }
+    var showDeleteAccount by remember { mutableStateOf(false) }
+
+
+    if (showUsernameUpdate) {
+        var newUsername by remember { mutableStateOf(user?.username ?: "Loading...") }
+
+        MessageDialog(
+            header = "Update username",
+            onOkButtonClicked = { showUsernameUpdate = false },
+            onDismissRequest = { showUsernameUpdate = false },
+            okButtonLabel = "Save"
+        ) {
+            OutlinedTextField(
+                value = newUsername,
+                onValueChange = { newUsername = it },
+                label = { Text("New username") }
+            )
+        }
+    }
+
+    if (showPasswordUpdate) {
+        var newPassword by remember { mutableStateOf("") }
+
+        MessageDialog(
+            header = "Update password",
+            onOkButtonClicked = { showPasswordUpdate = false },
+            onDismissRequest = { showPasswordUpdate = false },
+            okButtonLabel = "Save"
+        ) {
+            OutlinedTextField(
+                value = newPassword,
+                onValueChange = { newPassword = it },
+                label = { Text("New password") },
+                placeholder = { Text("New password") }
+            )
+        }
+    }
+
+    if (showDeleteAccount) {
+        MessageDialog(
+            header = "Delete Account",
+            message = "This action cannot be undone",
+            onOkButtonClicked = { showDeleteAccount = false },
+            onDismissRequest = { showDeleteAccount = false },
+            okButtonLabel = "Delete"
+        )
+    }
+
     Column(
         modifier = Modifier.padding(top = 16.dp, start = 16.dp, end = 16.dp)
     ) {
@@ -260,20 +310,29 @@ fun AccountSettings(user: User?) {
         )
 
         SettingRow(
-            "Update username",
-            "[${user?.username ?: "Loading.."}]"
+            title = "Update username",
+            description = "[${user?.username ?: "Loading.."}]",
+            onClick = {
+                showUsernameUpdate = true
+            }
         )
 
         SettingRow(
             "Update password",
-            "[********]"
+            "[********]",
+            onClick = {
+                showPasswordUpdate = true
+            }
         )
 
         SettingRow(
             "Delete account",
             "This action cannot be undone",
             titleColor = MaterialTheme.colorScheme.error,
-            descriptionColor = MaterialTheme.colorScheme.onErrorContainer
+            descriptionColor = MaterialTheme.colorScheme.onErrorContainer,
+            onClick = {
+                showDeleteAccount = true
+            }
         )
     }
 
@@ -313,7 +372,7 @@ fun SettingRow(
         verticalAlignment = Alignment.CenterVertically,
         modifier = Modifier
             .fillMaxWidth()
-            .clickable { onClick }
+            .clickable { onClick() }
             .padding(vertical = 8.dp)
     ) {
         Column() {
