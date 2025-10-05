@@ -127,13 +127,10 @@ fun ProfileView(
                 verticalAlignment = Alignment.Top
             ) { page ->
                 when (page) {
-                    1 -> { StatsPage(user.value) }
-                    0 -> { SettingsPage(user.value) }
+                    0 -> { StatsPage(user.value) }
+                    1 -> { SettingsPage(user.value) }
                 }
             }
-
-
-
         }
     }
 }
