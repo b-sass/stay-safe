@@ -26,11 +26,12 @@ class ActivityService(
     }
 
     suspend fun getUserActivities(id: Int): List<Activity> {
-        val response: HttpResponse = client.get("activities/users/$id")
-        // Check for status
-        if (response.status.value in 200..299) {
-            return response.body()
-        }
+        //TODO: Implement user activities
+//        val response: HttpResponse = client.get("activities/users/$id")
+//        // Check for status
+//        if (response.status.value in 200..299) {
+//            return response.body()
+//        }
         return emptyList()
     }
 

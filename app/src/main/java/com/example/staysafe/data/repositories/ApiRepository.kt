@@ -22,7 +22,7 @@ class ApiRepository (
     suspend fun getUserContacts(id: Int): List<UserContact> { return userAPI.getUserContacts(id) }
     suspend fun getUserLocations(id: Int): List<Location> { return userAPI.getUserLocations(id) }
     suspend fun createUser(user: User) { userAPI.createUser(user) }
-    suspend fun updateUser(id: Int, user: User) { userAPI.updateUser(id, user) }
+    suspend fun updateUser(id: Int, updateRequest: String) { userAPI.updateUser(id, updateRequest) }
     suspend fun loginUser(username: String, password: String): User? { return userAPI.loginUser(username, password) }
     suspend fun deleteUser(id: Int) { userAPI.deleteUser(id) }
 

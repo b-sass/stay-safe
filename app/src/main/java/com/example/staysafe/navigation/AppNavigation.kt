@@ -24,7 +24,7 @@ fun AppNavigation(ctx: Context) {
                 ctx = ctx,
                 onContactsClicked = { navController.navigate(Contact(it)) },
                 onPlacesClicked = { navController.navigate(Places(it)) },
-                onSettingsClicked = { navController.navigate(Settings) }
+                onSettingsClicked = { navController.navigate(Profile(it)) }
             )
         }
         composable<Login> { LoginView(
@@ -41,7 +41,7 @@ fun AppNavigation(ctx: Context) {
                 userID = args.userID,
                 onMapClicked = { navController.popBackStack(); },
                 onPlacesClicked = { navController.popBackStack(); navController.navigate(Places(it))},
-                onSettingsClicked = { navController.popBackStack(); navController.navigate(Settings)},
+                onSettingsClicked = { navController.popBackStack(); navController.navigate(Profile(it))},
             )
         }
         composable<Places> { backStackEntry ->
@@ -50,11 +50,17 @@ fun AppNavigation(ctx: Context) {
                 userID = args.userID,
                 onMapClicked = { navController.popBackStack(); },
                 onContactsClicked = { navController.popBackStack(); navController.navigate(Contact(it))},
-                onSettingsClicked = { navController.popBackStack(); navController.navigate(Settings)},
+                onSettingsClicked = { navController.popBackStack(); navController.navigate(Profile(it))},
             )
         }
-        composable<Settings> {
-            SettingsView(UserID = 0, navController = navController)
+        composable<Profile> { backStackEntry ->
+            val args = backStackEntry.toRoute<Profile>()
+            ProfileView(
+                userID = args.userID,
+                onMapClicked = { navController.popBackStack(); },
+                onContactsClicked = { navController.popBackStack(); navController.navigate(Contact(it))},
+                onPlacesClicked = { navController.popBackStack(); navController.navigate(Places(it))},
+            )
         }
     }
 }
@@ -85,4 +91,10 @@ data class AddActivity (
 @Serializable
 object Register
 @Serializable
-object Settings
+data class Profile (
+    val userID: Int
+)
+@Serializable
+object ProfileStats
+@Serializable
+object ProfileSettings
