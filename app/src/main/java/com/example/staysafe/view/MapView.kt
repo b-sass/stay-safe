@@ -4,15 +4,10 @@ import android.Manifest
 import android.content.Context
 import android.location.Location
 import android.util.Log
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.outlined.DirectionsRun
-import androidx.compose.material.icons.automirrored.outlined.DirectionsWalk
 import androidx.compose.material.icons.filled.LocationOn
-import androidx.compose.material.icons.filled.Person
-import androidx.compose.material.icons.outlined.DirectionsRun
 import androidx.compose.material.icons.outlined.Flag
 import androidx.compose.material.icons.outlined.Person
 import androidx.compose.material.icons.outlined.Settings
@@ -20,12 +15,9 @@ import androidx.compose.ui.Modifier
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
-import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.example.staysafe.R
 import com.example.staysafe.dialogs.ActivityDialog
 import com.google.android.gms.maps.model.CameraPosition
 import com.google.android.gms.maps.model.LatLng
@@ -36,11 +28,7 @@ import com.google.maps.android.compose.MapUiSettings
 import com.example.staysafe.viewModel.MapViewModel
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.rememberMultiplePermissionsState
-import com.google.android.gms.maps.model.Polyline
 import com.google.maps.android.compose.MapProperties
-import com.google.maps.android.compose.Marker
-import com.google.maps.android.compose.MarkerState
-import kotlinx.coroutines.delay
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalPermissionsApi::class)
 @Composable
@@ -142,7 +130,7 @@ fun MapView(
     ) { innerPadding ->
         // Map View
         GoogleMap(
-            modifier = Modifier.fillMaxSize(),
+            modifier = Modifier.fillMaxSize().padding(innerPadding),
             cameraPositionState = cameraPositionState,
             mapColorScheme = ComposeMapColorScheme.FOLLOW_SYSTEM,
             uiSettings = MapUiSettings(
@@ -151,4 +139,16 @@ fun MapView(
             properties = MapProperties(isMyLocationEnabled = true)
         )
     }
+}
+
+@Preview
+@Composable
+fun MapViewPreview() {
+    MapView(
+        userID = 1,
+        ctx = LocalContext.current,
+        onPlacesClicked = {},
+        onContactsClicked = {},
+        onSettingsClicked = {},
+    )
 }

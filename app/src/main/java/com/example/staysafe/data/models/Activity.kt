@@ -8,16 +8,28 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class Activity (
     val id: Int,
+    var userID: Int,
     var name: String,
-    @SerialName("user") var userID: String,
     var description: String,
     @Contextual
-    @SerialName("start") var startDate: Date,
-    var startLocationID: Int,
+    @SerialName("start") var startDate: Date?,
     @Contextual
     @SerialName("end") var endDate: Date,
+    var status: String = "active",
+)
+
+data class ActivityLocation (
+    val id: Int,
+    var userID: Int,
+    var name: String,
+    var description: String,
+    @Contextual
+    @SerialName("start") var startDate: Date?,
+    @Contextual
+    @SerialName("end") var endDate: Date,
+    var status: String = "active",
+    var startLocationID: Int,
     var endLocationID: Int,
     var startName: String,
     var endName: String,
-    var status: String,
 )

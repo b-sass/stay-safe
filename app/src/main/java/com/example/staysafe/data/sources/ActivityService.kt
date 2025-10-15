@@ -2,6 +2,7 @@ package com.example.staysafe.data.sources
 
 import com.example.staysafe.data.KtorClient
 import com.example.staysafe.data.models.Activity
+import com.example.staysafe.data.models.Location
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
 import io.ktor.client.request.delete
@@ -12,6 +13,7 @@ import io.ktor.client.request.setBody
 import io.ktor.client.statement.HttpResponse
 import io.ktor.http.ContentType
 import io.ktor.http.contentType
+import kotlinx.serialization.json.Json
 
 class ActivityService(
     private val client: HttpClient = KtorClient.client
@@ -35,10 +37,17 @@ class ActivityService(
         return emptyList()
     }
 
-    suspend fun createActivity(activity: Activity) {
+    suspend fun createActivity(activity: Activity, to: Location, from: Location) {
         client.post("activities") {
             contentType(ContentType.Application.Json)
-            setBody(activity)
+//            setBody("""
+//            {
+//                "userID": ${activity.userID},
+//                "name": "${activity.name},
+//                "from": $from,
+//                "to": $to
+//            }""".trimIndent())
+            setBody(Json {  })
         }
     }
 
