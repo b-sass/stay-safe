@@ -22,30 +22,54 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.staysafe.data.models.Activity
+import com.example.staysafe.data.models.Location
+import com.example.staysafe.viewModel.MapViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ActivityDialog(
+    userID: Int,
+    viewModel: MapViewModel = viewModel(),
     onDismissRequest: () -> Unit
 ) {
-    var from by remember { mutableStateOf("") }
-    var to by remember { mutableStateOf("") }
+    var from by remember { mutableStateOf<Location?>(null) }
+    var to by remember { mutableStateOf<Location?>(null) }
     var name by remember { mutableStateOf("") }
     var description by remember { mutableStateOf("") }
 
     var expandedFrom by remember { mutableStateOf(false) }
     var expandedTo by remember { mutableStateOf(false) }
 
+    val locations = viewModel.userLocations.collectAsStateWithLifecycle()
+
+    LaunchedEffect(locations) {
+        viewModel.getUserLocations(userID)
+    }
+
     MessageDialog(
         onDismissRequest = onDismissRequest,
         header = "New Activity",
-        onOkButtonClicked = onDismissRequest,
+        onOkButtonClicked = {
+            if (from != null && to != null && name.isNotEmpty()) {
+                val activity = Activity(
+                    userID = userID,
+                    name = name,
+                    description = description
+                )
+                viewModel.createActivity(activity, from!!, to!!)
+                onDismissRequest()
+            }
+        },
     ) {
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
@@ -62,8 +86,8 @@ fun ActivityDialog(
             ) {
 
                 OutlinedTextField(
-                    value = from,
-                    onValueChange = { from = it },
+                    value = from?.name ?: "",
+                    onValueChange = { from?.name = it },
                     label = { Text("From") },
                     readOnly = true,
                     trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expandedFrom) },
@@ -74,18 +98,13 @@ fun ActivityDialog(
                     expanded = expandedFrom,
                     onDismissRequest = { expandedFrom = false }
                 ) {
-                    DropdownMenuItem(
-                        text = { Text("Uni") },
-                        onClick = { from = "Uni"; expandedFrom = false }
-                    )
-                    DropdownMenuItem(
-                        text = { Text("Home") },
-                        onClick = { from = "Home"; expandedFrom = false }
-                    )
-                    DropdownMenuItem(
-                        text = { Text("Shops") },
-                        onClick = { from = "Shops"; expandedFrom = false }
-                    )
+
+                    for (location in locations.value) {
+                        DropdownMenuItem(
+                            text = { Text(location.name) },
+                            onClick = { from = location; expandedFrom = false }
+                        )
+                    }
                 }
             }
 
@@ -95,8 +114,8 @@ fun ActivityDialog(
             ) {
 
                 OutlinedTextField(
-                    value = to,
-                    onValueChange = { to = it },
+                    value = to?.name ?: "",
+                    onValueChange = { to?.name = it },
                     label = { Text("To") },
                     readOnly = true,
                     trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expandedTo) },
@@ -107,18 +126,12 @@ fun ActivityDialog(
                     expanded = expandedTo,
                     onDismissRequest = { expandedTo = false }
                 ) {
-                    DropdownMenuItem(
-                        text = { Text("Uni") },
-                        onClick = { to = "Uni"; expandedTo = false }
-                    )
-                    DropdownMenuItem(
-                        text = { Text("Home") },
-                        onClick = { to = "Home"; expandedTo = false }
-                    )
-                    DropdownMenuItem(
-                        text = { Text("Shops") },
-                        onClick = { to = "Shops"; expandedTo = false }
-                    )
+                    for (location in locations.value) {
+                        DropdownMenuItem(
+                            text = { Text(location.name) },
+                            onClick = { to = location; expandedTo = false }
+                        )
+                    }
                 }
             }
 

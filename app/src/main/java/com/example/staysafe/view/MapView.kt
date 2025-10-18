@@ -84,7 +84,7 @@ fun MapView(
     val scaffoldState = rememberBottomSheetScaffoldState()
 
     if (showActivities) {
-        ActivityDialog(onDismissRequest = { showActivities = false })
+        ActivityDialog(userID = userID, onDismissRequest = { showActivities = false })
     }
 
     Scaffold(

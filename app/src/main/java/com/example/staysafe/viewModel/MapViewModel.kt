@@ -3,12 +3,12 @@ package com.example.staysafe.viewModel
 import android.Manifest
 import android.content.Context
 import android.content.pm.PackageManager
-import android.location.Location
 import android.util.Log
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.staysafe.data.models.Activity
+import com.example.staysafe.data.models.Location
 import com.example.staysafe.data.models.User
 import com.example.staysafe.data.repositories.ApiRepository
 import com.google.android.gms.location.CurrentLocationRequest
@@ -29,6 +29,9 @@ class MapViewModel(
 
     private val _currentLocation = MutableStateFlow<android.location.Location?>(null)
     var currentLocation = _currentLocation.asStateFlow()
+
+    private val _userLocations = MutableStateFlow<List<Location>>(emptyList())
+    var userLocations = _userLocations.asStateFlow()
 
     private val _userContacts = MutableStateFlow<List<User>>(emptyList())
     var userContacts = _userContacts.asStateFlow()
@@ -59,6 +62,26 @@ class MapViewModel(
                         _currentLocation.value = loc
                         Log.d("MapViewModel", "Current Location: $loc")
                     }
+            }
+        }
+    }
+
+    fun createActivity(activity: Activity, from: Location, to: Location) {
+        viewModelScope.launch {
+            try {
+                api.createActivity(activity, from, to)
+            } catch (e: Exception) {
+                Log.e("MapViewModel", "Error creating activity: ${e.message}")
+            }
+        }
+    }
+
+    fun getUserLocations(userID: Int) {
+        viewModelScope.launch {
+            try {
+                _userLocations.value = api.getUserLocations(userID)
+            } catch (e: Exception) {
+                Log.e("MapViewModel", "Error fetching user locations: ${e.message}")
             }
         }
     }

@@ -34,7 +34,7 @@ class ApiRepository (
     suspend fun getActivities(): List<Activity> { return activityAPI.getActivities() }
     suspend fun getActivity(id: Int): Activity { return activityAPI.getActivity(id) }
     suspend fun getUserActivities(id: Int): List<Activity> { return activityAPI.getUserActivities(id) }
-    suspend fun createActivity(activity: Activity, to: Location, from: Location) { activityAPI.createActivity(activity, to, from) }
+    suspend fun createActivity(activity: Activity, from: Location, to: Location) { activityAPI.createActivity(activity, from, to) }
     suspend fun updateActivity(id: Int) { activityAPI.updateActivity(id) }
     suspend fun deleteActivity(id: Int) { activityAPI.deleteActivity(id) }
 
