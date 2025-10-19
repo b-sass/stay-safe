@@ -40,22 +40,22 @@ fun AddPlaceDialog(
     onDismissRequest: () -> Unit
 ) {
     var name by remember { mutableStateOf("") }
-    var latitude: Double? by remember { mutableStateOf(null) }
-    var longitude: Double? by remember { mutableStateOf(null) }
+    var latitude: String by remember { mutableStateOf("") }
+    var longitude: String by remember { mutableStateOf("") }
 
 
     MessageDialog(
         onDismissRequest = onDismissRequest,
         header = "New Place",
         onOkButtonClicked = {
-            if (name.isEmpty() || latitude == null || longitude == null) {
+            if (name.isEmpty() || latitude.isEmpty() || longitude.isEmpty()) {
                 Log.e("AddPlaceDialog", "Please fill in all fields")
             } else {
                 viewModel.createPlace(
                     Location(
                         name = name,
-                        latitude = latitude!!,
-                        longitude = longitude!!
+                        latitude = latitude.toDouble(),
+                        longitude = longitude.toDouble()
                     )
                 )
             }
@@ -72,14 +72,14 @@ fun AddPlaceDialog(
             )
 
             OutlinedTextField(
-                value = latitude?.toString() ?: "",
-                onValueChange = { latitude = it.toDoubleOrNull() },
+                value = latitude,
+                onValueChange = { latitude = it },
                 label = { Text("Latitude") }
             )
 
             OutlinedTextField(
-                value = longitude?.toString() ?: "",
-                onValueChange = { longitude = it.toDoubleOrNull() },
+                value = longitude,
+                onValueChange = { longitude = it },
                 label = { Text("Longitude") }
             )
         }
