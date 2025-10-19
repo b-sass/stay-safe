@@ -107,4 +107,13 @@ class MapViewModel(
         }
     }
 
+    fun getRoute(from: Location, to: Location) {
+        viewModelScope.launch {
+            try {
+                api.getRoute(from, to)
+            } catch (e: Exception) {
+                Log.e("MapViewModel", "Error getting route: ${e.message}")
+            }
+        }
+    }
 }

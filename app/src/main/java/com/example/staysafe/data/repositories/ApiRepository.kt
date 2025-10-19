@@ -8,6 +8,7 @@ import com.example.staysafe.data.models.UserContact
 import com.example.staysafe.data.sources.ActivityService
 import com.example.staysafe.data.sources.ContactService
 import com.example.staysafe.data.sources.LocationService
+import com.example.staysafe.data.sources.RouteSource
 import com.example.staysafe.data.sources.UserService
 
 class ApiRepository (
@@ -15,6 +16,7 @@ class ApiRepository (
     private val contactAPI: ContactService = ContactService(),
     private val activityAPI: ActivityService = ActivityService(),
     private val locationAPI: LocationService = LocationService(),
+    private val routeAPI: RouteSource = RouteSource()
 ) {
     // User
     suspend fun getUsers(): List<User> { return userAPI.getUsers() }
@@ -44,4 +46,7 @@ class ApiRepository (
     suspend fun createLocation(userID: Int, location: Location) { locationAPI.createLocation(userID, location) }
     suspend fun updateLocation(id: Int) { locationAPI.updateLocation(id) }
     suspend fun deleteLocation(id: Int) { locationAPI.deleteLocation(id) }
+
+    // Google Maps Routing
+    suspend fun getRoute(from: Location, to: Location) { routeAPI.getRoute(from, to) }
 }
