@@ -15,6 +15,7 @@ import androidx.compose.ui.Modifier
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -29,6 +30,7 @@ import com.example.staysafe.viewModel.MapViewModel
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.rememberMultiplePermissionsState
 import com.google.maps.android.compose.MapProperties
+import com.google.maps.android.compose.Polyline
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalPermissionsApi::class)
 @Composable
@@ -137,7 +139,12 @@ fun MapView(
                 zoomControlsEnabled = false,
             ),
             properties = MapProperties(isMyLocationEnabled = true)
-        )
+        ) {
+            Polyline(
+                points = listOf(LatLng(0.0, 0.0), LatLng(10.0, 10.0)),
+                color = Color.Red
+            )
+        }
     }
 }
 
