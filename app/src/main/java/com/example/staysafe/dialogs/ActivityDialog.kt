@@ -54,7 +54,6 @@ fun ActivityDialog(
                     description = description
                 )
                 viewModel.createActivity(activity, from!!, to!!)
-                viewModel.getRoute(from!!, to!!)
                 onDismissRequest()
             }
         },
