@@ -3,6 +3,7 @@ package com.example.staysafe.viewModel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.staysafe.data.models.Activity
+import com.example.staysafe.data.models.ActivityLocationData
 import com.example.staysafe.data.models.Location
 import com.example.staysafe.data.models.User
 import com.example.staysafe.data.models.UserContact
@@ -21,7 +22,7 @@ class ProfileViewModel: ViewModel() {
     private val _contacts = MutableStateFlow<List<UserContact>>(emptyList())
     val contacts = _contacts.asStateFlow()
 
-    private val _activities = MutableStateFlow<List<Activity>>(emptyList())
+    private val _activities = MutableStateFlow<List<ActivityLocationData>>(emptyList())
     val activities = _activities.asStateFlow()
 
     private val _places = MutableStateFlow<List<Location>>(emptyList())
@@ -76,10 +77,10 @@ class ProfileViewModel: ViewModel() {
         }
     }
 
-    fun getUserActivities(userID: Int) {
+    fun getUserActivities(userID: Int, status: String? = null) {
         viewModelScope.launch {
             try {
-                _activities.value = api.getUserActivities(userID)
+                _activities.value = api.getUserActivities(userID, status)
             } catch (e : Exception) {
                 e.printStackTrace()
             }
