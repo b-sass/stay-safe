@@ -108,6 +108,7 @@ dependencies {
 
     // Google Maps
     implementation(libs.maps.compose)
+    implementation(libs.android.maps.utils)
 
     // Location Permissions
     implementation(libs.accompanist.permissions)
