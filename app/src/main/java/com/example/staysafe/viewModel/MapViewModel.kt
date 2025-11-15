@@ -5,25 +5,27 @@ import android.content.Context
 import android.content.pm.PackageManager
 import android.util.Log
 import androidx.compose.runtime.mutableStateOf
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.staysafe.data.models.Activity
+import com.example.staysafe.data.models.ActivityLocationData
 import com.example.staysafe.data.models.Location
 import com.example.staysafe.data.models.User
 import com.example.staysafe.data.repositories.ApiRepository
+import com.example.staysafe.data.sources.Route
 import com.google.android.gms.location.CurrentLocationRequest
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.location.Priority
+import com.google.android.gms.maps.model.LatLng
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
 class MapViewModel(
-
 ): ViewModel() {
 
-//    val userLocation = LocationManager().getCurrentLocation()
-        // Handle location updates
     var currentUser = mutableStateOf<User?>(null)
     val api: ApiRepository = ApiRepository()
 
@@ -36,7 +38,10 @@ class MapViewModel(
     private val _userContacts = MutableStateFlow<List<User>>(emptyList())
     var userContacts = _userContacts.asStateFlow()
 
-    private val _contactActivities = MutableStateFlow<List<Activity>>(emptyList())
+    private val _userActivities = MutableStateFlow<List<ActivityLocationData>>(emptyList())
+    val userActivities = _userActivities.asStateFlow()
+
+    private val _contactActivities = MutableStateFlow<List<ActivityLocationData>>(emptyList())
     val contactActivities = _contactActivities.asStateFlow()
 
     private val _contactLocation = MutableStateFlow<Location?>(null)
@@ -70,6 +75,7 @@ class MapViewModel(
         viewModelScope.launch {
             try {
                 api.createActivity(activity, from, to)
+                api.getUserActivities(activity.userID, "active")
             } catch (e: Exception) {
                 Log.e("MapViewModel", "Error creating activity: ${e.message}")
             }
@@ -86,25 +92,62 @@ class MapViewModel(
         }
     }
 
+    fun getUserActivities(userID: Int, status: String? = null) {
+        viewModelScope.launch {
+            try {
+                _userActivities.value = api.getUserActivities(userID, status)
+            } catch (e: Exception) {
+                Log.e("MapViewModel", "Error fetching user activities: ${e.message}")
+            }
+        }
+    }
+
     fun getContactActivities(userID: Int) {
         viewModelScope.launch {
             try {
                 val contacts = api.getUserContacts(userID)
-                val allActivities = mutableListOf<Activity>()
+                val contactActivities = mutableListOf<ActivityLocationData>()
 
                 contacts.forEach { contact ->
-                    val contactID = contact.id ?: return@forEach
-                    val activities = api.getUserActivities(contactID)
-                    // Filter for activities with "Started" status
-                    val startedActivities = activities.filter { it.status == "Started" }
-                    allActivities.addAll(startedActivities)
+                    val contactID = contact.id!!
+                    val activities = api.getUserActivities(contactID, "active")
+                    // There can only be a single active activity at a time
+                    contactActivities.add(activities[0])
                 }
 
-                _contactActivities.value = allActivities
+                _contactActivities.value = contactActivities
             } catch (e: Exception) {
                 Log.e("MapViewModel", "Error fetching contact activities: ${e.message}")
             }
         }
     }
 
+    fun getRoute(from: LatLng, to: LatLng): LiveData<Route> {
+        val result = MutableLiveData<Route>()
+        viewModelScope.launch {
+            try {
+                val route = api.getRoute(from, to)
+                Log.d("MapViewModel", "Route: $route")
+                result.postValue(route)
+            } catch (e: Exception) {
+                Log.e("MapViewModel", "Error getting route: ${e.message}")
+            }
+        }
+        return result
+    }
+
+    fun stopActivity(userID: Int) {
+        Log.d("MapViewModel", "Activity list: ${_userActivities.value}")
+        val activity = _userActivities.value[0]
+        viewModelScope.launch {
+            try {
+                Log.d("MapViewModel", "Stopping activity: $activity")
+                api.updateActivity(activity.id!!, mapOf("status" to "finished"))
+                _userActivities.value = api.getUserActivities(userID, "active")
+                Log.d("MapViewModel", "Activity list: ${_userActivities.value}")
+            } catch (e: Exception) {
+                Log.e("MapViewModel", "Error stopping activity: ${e.message}")
+            }
+        }
+    }
 }

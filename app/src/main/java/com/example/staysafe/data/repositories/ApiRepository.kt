@@ -1,20 +1,24 @@
 package com.example.staysafe.data.repositories
 
 import com.example.staysafe.data.models.Activity
-import com.example.staysafe.data.models.Contact
+import com.example.staysafe.data.models.ActivityLocationData
 import com.example.staysafe.data.models.Location
 import com.example.staysafe.data.models.User
 import com.example.staysafe.data.models.UserContact
 import com.example.staysafe.data.sources.ActivityService
 import com.example.staysafe.data.sources.ContactService
 import com.example.staysafe.data.sources.LocationService
+import com.example.staysafe.data.sources.Route
+import com.example.staysafe.data.sources.RouteSource
 import com.example.staysafe.data.sources.UserService
+import com.google.android.gms.maps.model.LatLng
 
 class ApiRepository (
     private val userAPI: UserService = UserService(),
     private val contactAPI: ContactService = ContactService(),
     private val activityAPI: ActivityService = ActivityService(),
     private val locationAPI: LocationService = LocationService(),
+    private val routeAPI: RouteSource = RouteSource()
 ) {
     // User
     suspend fun getUsers(): List<User> { return userAPI.getUsers() }
@@ -33,9 +37,9 @@ class ApiRepository (
     // Activity
     suspend fun getActivities(): List<Activity> { return activityAPI.getActivities() }
     suspend fun getActivity(id: Int): Activity { return activityAPI.getActivity(id) }
-    suspend fun getUserActivities(id: Int): List<Activity> { return activityAPI.getUserActivities(id) }
+    suspend fun getUserActivities(id: Int, status: String? = null): List<ActivityLocationData> { return activityAPI.getUserActivities(id, status) }
     suspend fun createActivity(activity: Activity, from: Location, to: Location) { activityAPI.createActivity(activity, from, to) }
-    suspend fun updateActivity(id: Int) { activityAPI.updateActivity(id) }
+    suspend fun updateActivity(id: Int, updateData: Map<String, Any>) { activityAPI.updateActivity(id, updateData) }
     suspend fun deleteActivity(id: Int) { activityAPI.deleteActivity(id) }
 
     // Location
@@ -44,4 +48,7 @@ class ApiRepository (
     suspend fun createLocation(userID: Int, location: Location) { locationAPI.createLocation(userID, location) }
     suspend fun updateLocation(id: Int) { locationAPI.updateLocation(id) }
     suspend fun deleteLocation(id: Int) { locationAPI.deleteLocation(id) }
+
+    // Google Maps Routing
+    suspend fun getRoute(from: LatLng, to: LatLng): Route { return routeAPI.getRoute(from, to) }
 }

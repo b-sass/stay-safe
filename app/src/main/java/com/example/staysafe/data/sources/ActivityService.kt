@@ -1,8 +1,10 @@
 package com.example.staysafe.data.sources
 
+import android.util.Log
 import com.example.staysafe.data.KtorClient
 import com.example.staysafe.data.models.Activity
 import com.example.staysafe.data.models.ActivityLocation
+import com.example.staysafe.data.models.ActivityLocationData
 import com.example.staysafe.data.models.Location
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
@@ -15,6 +17,7 @@ import io.ktor.client.statement.HttpResponse
 import io.ktor.http.ContentType
 import io.ktor.http.contentType
 import kotlinx.serialization.json.Json
+import kotlin.collections.emptyList
 
 class ActivityService(
     private val client: HttpClient = KtorClient.client
@@ -28,14 +31,21 @@ class ActivityService(
         return client.get("activities/$id").body()
     }
 
-    suspend fun getUserActivities(id: Int): List<Activity> {
-        //TODO: Implement user activities
-//        val response: HttpResponse = client.get("activities/users/$id")
-//        // Check for status
-//        if (response.status.value in 200..299) {
-//            return response.body()
-//        }
-        return emptyList()
+    suspend fun getUserActivities(id: Int, status: String?): List<ActivityLocationData> {
+        val url = if (status != null) {
+            "users/$id/activities?status=$status"
+        } else {
+            "users/$id/activities"
+        }
+
+        Log.e("Activity Service", "URL: $url")
+
+        try {
+            return client.get(url).body()
+        } catch (e: Exception) {
+            Log.e("Activity Service", "Could not get user activities: ${e.message}")
+            return emptyList()
+        }
     }
 
     suspend fun createActivity(activity: Activity, from: Location, to: Location) {
@@ -54,8 +64,11 @@ class ActivityService(
         }
     }
 
-    suspend fun updateActivity(id: Int) {
-        client.put("activities/$id")
+    suspend fun updateActivity(id: Int, updateData: Map<String, Any>) {
+        client.put("activities/$id") {
+            contentType(ContentType.Application.Json)
+            setBody(updateData)
+        }
     }
 
     suspend fun deleteActivity(id: Int) {

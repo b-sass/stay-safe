@@ -11,10 +11,12 @@ import androidx.compose.material.icons.filled.LocationOn
 import androidx.compose.material.icons.outlined.Flag
 import androidx.compose.material.icons.outlined.Person
 import androidx.compose.material.icons.outlined.Settings
+import androidx.compose.material.icons.outlined.StopCircle
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -29,6 +31,7 @@ import com.example.staysafe.viewModel.MapViewModel
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.rememberMultiplePermissionsState
 import com.google.maps.android.compose.MapProperties
+import com.google.maps.android.compose.Polyline
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalPermissionsApi::class)
 @Composable
@@ -57,10 +60,39 @@ fun MapView(
         viewModel.getCurrentLocation(ctx)
         location = currentLocation
     }
+
+    val userActivities by viewModel.userActivities.collectAsStateWithLifecycle()
     val contactActivities by viewModel.contactActivities.collectAsStateWithLifecycle()
 
     LaunchedEffect(userID) {
+        viewModel.getUserActivities(userID, "active")
         viewModel.getContactActivities(userID)
+    }
+
+    val polyline = remember { mutableStateListOf<LatLng>() }
+    LaunchedEffect(userActivities) {
+        for (activity in userActivities) {
+            viewModel.getRoute(
+                LatLng(activity.fromLat, activity.fromLong),
+                LatLng(activity.toLat, activity.toLong)
+            ).observeForever { route ->
+                Log.d("MapView", "Route: $route")
+                polyline.addAll(route.polyline)
+            }
+        }
+    }
+
+    val contactPolyline = remember { mutableStateListOf<List<LatLng>>() }
+    LaunchedEffect(contactActivities) {
+        for (activity in contactActivities) {
+            viewModel.getRoute(
+                LatLng(activity.fromLat, activity.fromLong),
+                LatLng(activity.toLat, activity.toLong)
+            ).observeForever { route ->
+                Log.d("MapView", "Route: $route")
+                contactPolyline.add(route.polyline)
+            }
+        }
     }
 
     Log.d("MapView", "ViewModel Location: $currentLocation")
@@ -84,7 +116,7 @@ fun MapView(
     val scaffoldState = rememberBottomSheetScaffoldState()
 
     if (showActivities) {
-        ActivityDialog(userID = userID, onDismissRequest = { showActivities = false })
+        ActivityDialog(userID = userID, onDismissRequest = { showActivities = false; viewModel.getUserActivities(userID, "active") })
     }
 
     Scaffold(
@@ -120,11 +152,18 @@ fun MapView(
             }
         },
         floatingActionButton = {
-            FloatingActionButton(
-                onClick = { showActivities = true },
-
+            if (userActivities.isNotEmpty()) {
+                FloatingActionButton (
+                    onClick = { viewModel.stopActivity(userID) },
+                    containerColor = Color.Red,
+                ) { Icon(Icons.Outlined.StopCircle, contentDescription = "Stop activity") }
+            } else {
+                FloatingActionButton(
+                    onClick = { showActivities = true },
+                    containerColor = MaterialTheme.colorScheme.primary
                 ) {
-                Icon(Icons.AutoMirrored.Outlined.DirectionsRun, contentDescription = "Activities")
+                    Icon(Icons.AutoMirrored.Outlined.DirectionsRun, contentDescription = "Start activity")
+                }
             }
         }
     ) { innerPadding ->
@@ -137,18 +176,15 @@ fun MapView(
                 zoomControlsEnabled = false,
             ),
             properties = MapProperties(isMyLocationEnabled = true)
-        )
-    }
-}
+        ) {
+            if (polyline.isNotEmpty()) {
+                Log.d("MapView", "Polyline: $polyline")
+                Polyline(points = polyline.toList<LatLng>(), color = Color.Red)
+            }
 
-@Preview
-@Composable
-fun MapViewPreview() {
-    MapView(
-        userID = 1,
-        ctx = LocalContext.current,
-        onPlacesClicked = {},
-        onContactsClicked = {},
-        onSettingsClicked = {},
-    )
+            for (line in contactPolyline) {
+                Polyline(points = line, color = Color.Blue)
+            }
+        }
+    }
 }
