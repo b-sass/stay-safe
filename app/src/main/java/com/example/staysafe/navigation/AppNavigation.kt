@@ -15,7 +15,7 @@ fun AppNavigation(ctx: Context) {
 
     NavHost(
         navController = navController,
-        startDestination = Login
+        startDestination = Map(2)
     ) {
         composable<Map> { backStackEntry ->
             val args = backStackEntry.toRoute<Map>()
