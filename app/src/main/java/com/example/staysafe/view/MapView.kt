@@ -11,6 +11,7 @@ import androidx.compose.material.icons.filled.LocationOn
 import androidx.compose.material.icons.outlined.Flag
 import androidx.compose.material.icons.outlined.Person
 import androidx.compose.material.icons.outlined.Settings
+import androidx.compose.material.icons.outlined.StopCircle
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.compose.material3.*
@@ -151,11 +152,18 @@ fun MapView(
             }
         },
         floatingActionButton = {
-            FloatingActionButton(
-                onClick = { showActivities = true },
-                containerColor = if (userActivities.isNotEmpty()) Color.Red else MaterialTheme.colorScheme.primary
-            ) {
-                Icon(Icons.AutoMirrored.Outlined.DirectionsRun, contentDescription = "Activities")
+            if (userActivities.isNotEmpty()) {
+                FloatingActionButton (
+                    onClick = { viewModel.stopActivity(userID) },
+                    containerColor = Color.Red,
+                ) { Icon(Icons.Outlined.StopCircle, contentDescription = "Stop activity") }
+            } else {
+                FloatingActionButton(
+                    onClick = { showActivities = true },
+                    containerColor = MaterialTheme.colorScheme.primary
+                ) {
+                    Icon(Icons.AutoMirrored.Outlined.DirectionsRun, contentDescription = "Start activity")
+                }
             }
         }
     ) { innerPadding ->
