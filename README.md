@@ -17,13 +17,13 @@
 
 ## 📸 Screenshots
 
-|           Map View            |    Profile & Settings    |
-|:-----------------------------:|:------------------------:|
-| *[Map](/assets/MapView(user).jpg)* | *[Profile](/assets/Settings.jpg)* |
+|              Map View               |         Profile & Settings         |
+|:-----------------------------------:|:----------------------------------:|
+| *![Map](/assets/MapView(user).jpg)* | *![Profile](/assets/Settings.jpg)* |
 
-|      Contacts List       |       Places       |
-|:------------------------:|:------------------:|
-| *[Contacts](/assets/Contacts.jpg)* | *[Places](/assets/Places)* |
+|            Contacts List            |             Places              |
+|:-----------------------------------:|:-------------------------------:|
+| *![Contacts](/assets/Contacts.jpg)* | *![Places](/assets/Places.jpg)* |
 
 ---
 
