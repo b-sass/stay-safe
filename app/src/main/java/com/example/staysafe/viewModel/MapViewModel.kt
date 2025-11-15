@@ -135,4 +135,19 @@ class MapViewModel(
         }
         return result
     }
+
+    fun stopActivity(userID: Int) {
+        Log.d("MapViewModel", "Activity list: ${_userActivities.value}")
+        val activity = _userActivities.value[0]
+        viewModelScope.launch {
+            try {
+                Log.d("MapViewModel", "Stopping activity: $activity")
+                api.updateActivity(activity.id!!, mapOf("status" to "finished"))
+                _userActivities.value = api.getUserActivities(userID, "active")
+                Log.d("MapViewModel", "Activity list: ${_userActivities.value}")
+            } catch (e: Exception) {
+                Log.e("MapViewModel", "Error stopping activity: ${e.message}")
+            }
+        }
+    }
 }
