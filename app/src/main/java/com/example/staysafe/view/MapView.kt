@@ -115,7 +115,7 @@ fun MapView(
     val scaffoldState = rememberBottomSheetScaffoldState()
 
     if (showActivities) {
-        ActivityDialog(userID = userID, onDismissRequest = { showActivities = false })
+        ActivityDialog(userID = userID, onDismissRequest = { showActivities = false; viewModel.getUserActivities(userID, "active") })
     }
 
     Scaffold(
