@@ -2,7 +2,6 @@ package com.example.staysafe.data.repositories
 
 import com.example.staysafe.data.models.Activity
 import com.example.staysafe.data.models.ActivityLocationData
-import com.example.staysafe.data.models.Contact
 import com.example.staysafe.data.models.Location
 import com.example.staysafe.data.models.User
 import com.example.staysafe.data.models.UserContact
@@ -40,7 +39,7 @@ class ApiRepository (
     suspend fun getActivity(id: Int): Activity { return activityAPI.getActivity(id) }
     suspend fun getUserActivities(id: Int, status: String? = null): List<ActivityLocationData> { return activityAPI.getUserActivities(id, status) }
     suspend fun createActivity(activity: Activity, from: Location, to: Location) { activityAPI.createActivity(activity, from, to) }
-    suspend fun updateActivity(id: Int) { activityAPI.updateActivity(id) }
+    suspend fun updateActivity(id: Int, updateData: Map<String, Any>) { activityAPI.updateActivity(id, updateData) }
     suspend fun deleteActivity(id: Int) { activityAPI.deleteActivity(id) }
 
     // Location

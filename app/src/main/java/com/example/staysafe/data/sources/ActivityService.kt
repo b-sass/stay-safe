@@ -64,8 +64,11 @@ class ActivityService(
         }
     }
 
-    suspend fun updateActivity(id: Int) {
-        client.put("activities/$id")
+    suspend fun updateActivity(id: Int, updateData: Map<String, Any>) {
+        client.put("activities/$id") {
+            contentType(ContentType.Application.Json)
+            setBody(updateData)
+        }
     }
 
     suspend fun deleteActivity(id: Int) {
